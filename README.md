@@ -1,6 +1,6 @@
 # SuperLearner
 
-This is the current version of the cdmApple R package (version 0.*).
+This is the current version of the cdmApple R package (version 0.9.*).
 
 ## How to install from Github ##
 
