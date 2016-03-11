@@ -22,9 +22,6 @@
 #' to the function (or one is found globally), then the connection remains
 #' open.
 #'
-#' @details Uses the v15.10.00.33 release (12 Jan 2016) tdgssconfig.jar and
-#' terajdbc4.jar drivers.
-#'
 #' @param user Username to grab CPU use from. Defaults to the \code{username}
 #' used in the Teradata connection.
 #' @param date Date desired for query information. Defaults to today's date. If

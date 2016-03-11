@@ -18,15 +18,15 @@ td(query = "", ...)
 \item{addr}{(Optional) String containing address of database to connect to.
 By default, is \emph{jdbc:teradata://megadew.corp.apple.com/charset=utf8}.}
 
-\item{db}{Name of database to connect to. By default, is \emph{CDM_Special}.}
+\item{db}{(Optional) Name of database to connect to. By default, is \emph{CDM_Special}.}
 
-\item{classPath}{The location of the JDBC drivers. By default, will use the
+\item{classPath}{(Optional) The location of the JDBC drivers. By default, will use the
 drivers included in the package.}
 }
 \value{
-If no data is returned from query, then an invisible object is
-returned. Otherwise, a \code{data.frame} object with all data queried will
-be returned.
+If no data is returned from query, then an \code{\link{invisible}} 
+object is returned. Otherwise, a \code{\link{data.frame}} object with all 
+data queried will be returned.
 }
 \description{
 Sends queries to Teradata. This code is specifically designed
@@ -59,5 +59,10 @@ terajdbc4.jar drivers.
 ## Uses same connection, but allows code to find globally
 # td("select count(*) from ICDB_PERSON")
 
+}
+\seealso{
+\code{\link{tdConn}} for connection, \code{\link{tdDisk}} for disk usage,
+\code{\link{tdSpool}} for spool usage, \code{\link{tdCpu}} for CPU 
+usage, and \code{\link{tdJoin}} for joining tables.
 }
 

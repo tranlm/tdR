@@ -51,4 +51,9 @@ terajdbc4.jar drivers.
 # conn = tdConn(<username>, <password>, addr="jdbc:teradata://redwood.corp.apple.com")
 
 }
+\seealso{
+\code{\link{td}} for Teradata queries, \code{\link{tdDisk}} for disk usage,
+\code{\link{tdSpool}} for spool usage, \code{\link{tdCpu}} for CPU 
+usage, and \code{\link{tdJoin}} for joining tables.
+}
 

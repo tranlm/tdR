@@ -36,14 +36,15 @@ left outer, right outer, full outer}.}
 \item{addr}{(Optional) String containing address of database to connect to.
 By default, is \emph{jdbc:teradata://megadew.corp.apple.com/charset=utf8}.}
 
-\item{db}{Name of database to connect to. By default, is \emph{CDM_Special}.}
+\item{db}{(Optional) Name of database to connect to. By default, is \emph{CDM_Special}.}
 
-\item{classPath}{The location of the JDBC drivers. By default, will use the
+\item{classPath}{(Optional) The location of the JDBC drivers. By default, will use the
 drivers included in the package.}
 }
 \value{
 The code creates the data table on the Teradata server via the
-\code{JDBCConnection} object. Names of each table created are returned.
+\code{JDBCConnection} object. Names of each table created are returned 
+as a string vector.
 }
 \description{
 Takes two (or more) Teradata EDW tables using a JDBC connection
@@ -85,5 +86,10 @@ open.
 ## left join on table ##
 # tdJoin(<outputTable>, <inputTable1>, <inputTable2>, <index1>, <index2>, joinType="left")
 
+}
+\seealso{
+\code{\link{tdConn}} for connection, \code{\link{tdDisk}} for disk usage,
+\code{\link{tdSpool}} for spool usage, \code{\link{tdCpu}} for CPU 
+usage, and \code{\link{td}} for general queries.
 }
 
