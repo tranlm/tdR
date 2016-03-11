@@ -1,24 +1,24 @@
-# cdmApple R-package
+# tdR R-package
 
 This is the current version of the cdmApple R package (version 0.9.*).
 
-## How to install from Github ##
+## How to install from Gitlab ##
 
-To install the cdmApple package, we recommend using the [devtools] package.
+To install the tdR package, we recommend cloning the gitlab repository
 
-### devtools
-If you have [devtools] installed you can install the cdmApple package using the following script.
+### Gitlab
+With the terminal open, you can install the cdmApple package using the following script.
 
-```
-# install.packages("devtools")
-library(devtools)
-install_git("git@gitlab.sd.apple.com:linh_m_tran/cdmApple.git")
-```
-
-### CRAN
-Alternatively, the package is available for download and can be installed within R using
-```
-install.packages("cdmApple_0.0.0.9000.tar.gz")
+```shell
+git clone git@gitlab.sd.apple.com:cdmApple/tdR.git
+R CMD INSTALL tdR
 ```
 
-[devtools]: https://github.com/hadley/devtools
+### Download
+Alternatively, the package is available for download. Safari unzips the compressed folder, and will usually add a suffix to the name. The package can then be install with the command
+
+```shell
+R CMD INSTALL tdR-master-XXXX
+```
+
+where XXXX is the suffix added to the folder name.

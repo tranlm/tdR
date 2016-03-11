@@ -6,7 +6,7 @@
 ###############################################################################
 
 
-#' @title td.cpu
+#' @title tdCpu
 #'
 #' @description Queries Teradata for CPU use. This code is specifically designed
 #' for connectivity to Teradata servers using OSX at Apple using JDBC drivers
@@ -34,27 +34,32 @@
 #' @param password (Optional) Connection password.
 #' @param addr (Optional) String containing address of database to connect to.
 #' By default, is \emph{jdbc:teradata://megadew.corp.apple.com/charset=utf8}.
-#' @param db Name of database to connect to. By default, is \emph{CDM_Special}.
-#' @param classPath The location of the JDBC drivers. By default, will use the
+#' @param db (Optional) Name of database to connect to. By default, is \emph{CDM_Special}.
+#' @param classPath (Optional) The location of the JDBC drivers. By default, will use the
 #' drivers included in the package.
 #'
-#' @return A \code{data.frame} object is returned with the Teradata query
+#' @return A \code{\link{data.frame}} object is returned with the Teradata query
 #' information of the specified date.
 #'
+#' @seealso 
+#' \code{\link{tdConn}} for connection, \code{\link{tdDisk}} for disk usage,
+#' \code{\link{tdSpool}} for spool usage, and \code{\link{td}} for general 
+#' queries
+#' 
 #' @examples
 #' ## NOT RUN ##
 #' ## Connect to default data warehouse and data base
-#' # td.cpu(<username>, <password>)
+#' # tdCpu(<username>, <password>)
 #'
 #' ## Runs query using a separately established connection
 #' # conn = tdConn(<username>, <password>)
-#' # td.cpu(conn=conn)
+#' # tdCpu(conn=conn)
 #'
 #' ## Uses same connection, but allows code to find globally
-#' # td.cpu()
+#' # tdCpu()
 #'
 #' @export
-td.cpu = function(user="user", date=format(as.Date(Sys.time()), "%y%m%d"), ...) {
+tdCpu = function(user="user", date=format(as.Date(Sys.time()), "%y%m%d"), ...) {
 
 	## Connection ##
 	conn = tdCheckConn(list(...))

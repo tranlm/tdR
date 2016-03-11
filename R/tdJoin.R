@@ -50,14 +50,20 @@
 #' @param password (Optional) Connection password.
 #' @param addr (Optional) String containing address of database to connect to.
 #' By default, is \emph{jdbc:teradata://megadew.corp.apple.com/charset=utf8}.
-#' @param db Name of database to connect to. By default, is \emph{CDM_Special}.
-#' @param classPath The location of the JDBC drivers. By default, will use the
+#' @param db (Optional) Name of database to connect to. By default, is \emph{CDM_Special}.
+#' @param classPath (Optional) The location of the JDBC drivers. By default, will use the
 #' drivers included in the package.
 #' @param ... Additional \code{tdfX} and \code{indexX} to merge, where \code{X} is the count.
 #'
 #' @return The code creates the data table on the Teradata server via the
-#' \code{JDBCConnection} object. Names of each table created are returned.
+#' \code{JDBCConnection} object. Names of each table created are returned 
+#' as a string vector.
 #'
+#' @seealso 
+#' \code{\link{tdConn}} for connection, \code{\link{tdDisk}} for disk usage,
+#' \code{\link{tdSpool}} for spool usage, \code{\link{tdCpu}} for CPU 
+#' usage, and \code{\link{td}} for general queries.
+#' 
 #' @examples
 #' ## NOT RUN ##
 #' ## With connection pre-established, inner join on table ##

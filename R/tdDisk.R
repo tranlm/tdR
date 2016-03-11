@@ -6,7 +6,7 @@
 ###############################################################################
 
 
-#' @title td.disk
+#' @title tdDisk
 #'
 #' @description Queries Teradata for disk space used. This code is specifically
 #' designed for connectivity to Teradata servers using OSX at Apple using JDBC
@@ -32,27 +32,32 @@
 #' @param password (Optional) Connection password.
 #' @param addr (Optional) String containing address of database to connect to.
 #' By default, is \emph{jdbc:teradata://megadew.corp.apple.com/charset=utf8}.
-#' @param db Name of database to connect to. By default, is \emph{CDM_Special}.
-#' @param classPath The location of the JDBC drivers. By default, will use the
+#' @param db (Optional) Name of database to connect to. By default, is \emph{CDM_Special}.
+#' @param classPath (Optional) The location of the JDBC drivers. By default, will use the
 #' drivers included in the package.
 #'
-#' @return A \code{data.frame} object is returned with all of the Teradata
+#' @return A \code{\link{data.frame}} object is returned with all of the Teradata
 #' query information of the specified date.
 #'
+#' @seealso 
+#' \code{\link{tdConn}} for connection, \code{\link{tdCpu}} for CPU usage,
+#' \code{\link{tdSpool}} for spool usage, and \code{\link{td}} for general 
+#' queries
+#' 
 #' @examples
 #' ## NOT RUN ##
 #' ## Connect to default data warehouse and data base
-#' # td.disk(<username>, <password>)
+#' # tdDisk(<username>, <password>)
 #'
 #' ## Runs query using a separately established connection
 #' # conn = tdConn(<username>, <password>)
-#' # td.disk(conn=conn)
+#' # tdDisk(conn=conn)
 #'
 #' ## Uses same connection, but allows code to find globally
-#' # td.disk()
+#' # tdDisk()
 #'
 #' @export
-td.disk = function(user="user", ...) {
+tdDisk = function(user="user", ...) {
 
 	## Connection ##
 	conn = tdCheckConn(list(...))

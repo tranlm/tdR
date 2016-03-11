@@ -29,6 +29,11 @@
 #'
 #' @return A \code{RJDBC} connection object is returned.
 #'
+#' @seealso 
+#' \code{\link{td}} for Teradata queries, \code{\link{tdDisk}} for disk usage,
+#' \code{\link{tdSpool}} for spool usage, \code{\link{tdCpu}} for CPU 
+#' usage, and \code{\link{tdJoin}} for joining tables.
+#' 
 #' @examples
 #' ## NOT RUN ##
 #' ## Connect to default data warehouse and data base

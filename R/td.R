@@ -31,14 +31,19 @@
 #' @param password (Optional) Connection password.
 #' @param addr (Optional) String containing address of database to connect to.
 #' By default, is \emph{jdbc:teradata://megadew.corp.apple.com/charset=utf8}.
-#' @param db Name of database to connect to. By default, is \emph{CDM_Special}.
-#' @param classPath The location of the JDBC drivers. By default, will use the
+#' @param db (Optional) Name of database to connect to. By default, is \emph{CDM_Special}.
+#' @param classPath (Optional) The location of the JDBC drivers. By default, will use the
 #' drivers included in the package.
 #'
-#' @return If no data is returned from query, then an invisible object is
-#' returned. Otherwise, a \code{data.frame} object with all data queried will
-#' be returned.
+#' @return If no data is returned from query, then an \code{\link{invisible}} 
+#' object is returned. Otherwise, a \code{\link{data.frame}} object with all 
+#' data queried will be returned.
 #'
+#' @seealso 
+#' \code{\link{tdConn}} for connection, \code{\link{tdDisk}} for disk usage,
+#' \code{\link{tdSpool}} for spool usage, \code{\link{tdCpu}} for CPU 
+#' usage, and \code{\link{tdJoin}} for joining tables.
+#' 
 #' @examples
 #' ## NOT RUN ##
 #' ## Runs a quick query based on connection profile

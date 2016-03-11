@@ -6,7 +6,7 @@
 ###############################################################################
 
 
-#' @title td.spool
+#' @title tdSpool
 #'
 #' @description Queries Teradata for spool use. This code is specifically designed
 #' for connectivity to Teradata servers using OSX at Apple using JDBC drivers
@@ -42,17 +42,17 @@
 #' @examples
 #' ## NOT RUN ##
 #' ## Connect to default data warehouse and data base
-#' # td.spool(<username>, <password>)
+#' # tdSpool(<username>, <password>)
 #'
 #' ## Runs query using a separately established connection
 #' # conn = tdConn(<username>, <password>)
-#' # td.spool(conn=conn)
+#' # tdSpool(conn=conn)
 #'
 #' ## Uses same connection, but allows code to find globally
-#' # td.spool()
+#' # tdSpool()
 #'
 #' @export
-td.spool = function(user="user", ...) {
+tdSpool = function(user="user", ...) {
 
 	## Connection ##
 	conn = tdCheckConn(list(...))
