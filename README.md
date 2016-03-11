@@ -20,3 +20,7 @@ Alternatively, the package is available for download. Safari unzips the compress
 
 ```shell
 R CMD INSTALL tdR-master-XXXX
+```
+
+where XXXX is the suffix added to the end of the uncompressed folder.
+
