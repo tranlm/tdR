@@ -1,4 +1,4 @@
-# SuperLearner
+# cdmApple R-package
 
 This is the current version of the cdmApple R package (version 0.9.*).
 

@@ -41,7 +41,7 @@
 #' # conn = tdConn(<username>, <password>, addr="jdbc:teradata://redwood.corp.apple.com")
 #'
 #' @export
-tdConn = function(username=NULL, password=NULL, addr="jdbc:teradata://megadew.corp.apple.com/charset=utf8", db=ifelse(addr=="jdbc:teradata://megadew.corp.apple.com/charset=utf8,tmode=ansi", "CDM_Special", NULL), classPath=NULL, conn=NULL) {
+tdConn = function(username=NULL, password=NULL, addr="jdbc:teradata://megadew.corp.apple.com/charset=utf8", db=ifelse(addr=="jdbc:teradata://megadew.corp.apple.com/charset=utf8", "CDM_Special", ""), classPath=NULL, conn=NULL) {
 
 	## CHECKS ##
 	if(is.null(conn) & (is.null(username) | is.null(password) | is.null(addr))) stop('No connection or profile provided.')

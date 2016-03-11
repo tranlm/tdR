@@ -6,9 +6,8 @@
 \usage{
 tdConn(username = NULL, password = NULL,
   addr = "jdbc:teradata://megadew.corp.apple.com/charset=utf8",
-  db = ifelse(addr ==
-  "jdbc:teradata://megadew.corp.apple.com/charset=utf8,tmode=ansi",
-  "CDM_Special", NULL), classPath = NULL, conn = NULL)
+  db = ifelse(addr == "jdbc:teradata://megadew.corp.apple.com/charset=utf8",
+  "CDM_Special", ""), classPath = NULL, conn = NULL)
 }
 \arguments{
 \item{username}{Connection user name.}
