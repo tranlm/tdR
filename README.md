@@ -2,17 +2,16 @@
 
 This is the current version of the cdmApple R package (version 0.9.*).
 
-## How to install from Github ##
+## How to install from Gitlab ##
 
-To install the cdmApple package, we recommend using the [devtools] package.
+To install the cdmApple package, we recommend cloning the gitlab repository
 
-### devtools
-If you have [devtools] installed you can install the cdmApple package using the following script.
+### Bash
+With the terminal open, you can install the cdmApple package using the following script.
 
-```
-# install.packages("devtools")
-library(devtools)
-install_git("git@gitlab.sd.apple.com:linh_m_tran/cdmApple.git")
+```shell
+git clone git@gitlab.sd.apple.com:linh_m_tran/cdmApple.git
+R CMD INSTALL cdmApple
 ```
 
 ### CRAN
@@ -20,5 +19,3 @@ Alternatively, the package is available for download and can be installed within
 ```
 install.packages("cdmApple_0.0.0.9000.tar.gz")
 ```
-
-[devtools]: https://github.com/hadley/devtools
