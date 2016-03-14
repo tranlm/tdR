@@ -24,19 +24,13 @@
 #'
 #' @details 
 #' Many of the core production tables in Teradata are locked, such that 
-#' trying to query them will result in \code{Error 3853}. This is a part of
+#' trying to query for indicies will result in \code{Error 3853}. This is a part of
 #' the user restrictions and can be circumvented by creating a new subset of 
-#' the table and querying that subset. 
+#' the table and querying that subset. If the index is unable to be determined, 
+#' a value of \code{NA} will be returned.
 #' 
 #' @param tables String vector of names of tables to get column names from.
-#' @param conn (Optional) Connection object for Teradata.
-#' @param username (Optional) Connection user name.
-#' @param password (Optional) Connection password.
-#' @param addr (Optional) String containing address of database to connect to.
-#' By default, is \emph{jdbc:teradata://megadew.corp.apple.com/charset=utf8}.
-#' @param db (Optional) Name of database to connect to. By default, is \emph{CDM_Special}.
-#' @param classPath (Optional) The location of the JDBC drivers. By default, will use the
-#' drivers included in the package.
+#' @param ... Optional connection settings.
 #'
 #' @return Returns a \code{\link{data.frame}} object with the following items:  
 #' \itemize{
@@ -46,6 +40,7 @@
 #'  	\item{"ColumnFormat"}{Column format}
 #' 	\item{"ColumnType"}{Column type.}
 #' 	\item{"ColumnLength"}{Column length.}
+#' 	\item{"Index"}{Indicator of whether column is a primary index (\code{1}) or secondary index (\code{2})}
 #' }
 #' 
 #' @seealso 
@@ -62,15 +57,15 @@
 #' # conn = tdConn(<username>, <password>, db="GCA")
 #' # tdNames("ICDB_PERSON", conn=conn)
 #'
-#' ## Uses same connection, but allows code to find globally
-#' # td("select count(*) from ICDB_PERSON")
+#' ## Uses same connection, but allows code to find globally. Also done for multiple tables.
+#' # tdNames(c("ICDB_PERSON", "ICDB_PERSON_X"))
 #'
 #' @export
 tdNames = function(tables=NULL, ...) {
 	
-	if (is.null(tables) | tables=='') stop("No Teradata table specified.")
+	if (is.null(tables) | all(tables=='')) stop("No Teradata table specified.")
 	tables = strsplit(toupper(tables), "\\.")
-	if (any(unlist(lapply(tables, length))>2)) stop("Table name can only have up to 1 period.")
+	if (any(unlist(lapply(tables, length))>2)) stop("Tables name can only have up to 1 period.")
 			
 	## Connection ##
 	conn = tdCheckConn(list(...))
@@ -102,13 +97,16 @@ tdNames = function(tables=NULL, ...) {
 	tableInfo$TableName = gsub("[[:space:]]*$", "", tableInfo$TableName)
 	tableInfo$ColumnName = gsub("[[:space:]]*$", "", tableInfo$ColumnName)
 	tableInfo$ColumnFormat = gsub("[[:space:]]*$", "", tableInfo$ColumnFormat)
+	tableMissing = NULL	
+	for(i in 1:nrow(tables)) if (!tables[i,2] %in% toupper(tableInfo$TableName)) tableMissing = c(tableMissing, tables[i,2])
+	if (!is.null(tableMissing)) warning(paste("The following tables were not found:", paste(tableMissing, collapse=", ")))
 	
 	## Primary / secondary indices ##
-	tableInfo$index = NA
+	tableInfo$Index = NA
 	for(i in 1:nrow(tables)) {
-		tableShow = try(dbGetQuery(conn, sprintf("show table %s.%s", tables[i,1], tables[i,2])), TRUE)
+		tableShow = try(DBI::dbGetQuery(conn, sprintf("show table %s.%s", tables[i,1], tables[i,2]))[1,1], TRUE)
 		if (!inherits(tableShow, "try-error")) {
-			tmp = substring(tableShow, regexpr("PRIMARY INDEX \\(", tableShow[1,1])+14)
+			tmp = substring(tableShow, regexpr("PRIMARY INDEX \\(", tableShow)+14)
 			m = gregexpr("\\([^)]*\\)", tmp)
 			indicies = regmatches(tmp, m)[[1]]
 			indicies = lapply(indicies, function(x) {
@@ -116,21 +114,19 @@ tdNames = function(tables=NULL, ...) {
 				tmp = gsub("^*[[:space:]]|[[:space:]]*$", "", tmp)
 				return(tmp)
 				})
-					
-			prim.keys = unlist(strsplit(substr(tmp, 1, nchar(tmp)-3), "\\,"))
-			prim.keys = gsub("^*[[:space:]]|[[:space:]]*$", "", prim.keys)
-			
-			pos = regexpr("INDEX \\(", tableInfo[1,1])
-			all.keys = 
-			tableInfo
+			keys = lapply(indicies, function(x) unlist(strsplit(x, "\\,")))
+			prim.keys = gsub("^*[[:space:]]|[[:space:]]*$", "", keys[[1]])
+			if (length(keys)>1) {
+				sec.keys = gsub("^*[[:space:]]|[[:space:]]*$", "", keys[[2]])
+			} else sec.keys=NULL
+			idx = toupper(tableInfo$DatabaseName)==tables[i,1] & toupper(tableInfo$TableName)==tables[i,2]
+			tableInfo$Index[idx] = ifelse(tableInfo$ColumnName[idx] %in% prim.keys, 1, ifelse(tableInfo$ColumnName[idx] %in% sec.keys, 2, 0))
 		}
-		pos = 
-		prim.key = substring()
 	}
-	
+	tableInfo = tableInfo[order(tableInfo$DatabaseName, tableInfo$TableName),]
 	
 	## Connection ##
-	if (	attr(conn, "tmpConnection")) dbDisconnect(conn)
+	if (	attr(conn, "tmpConnection")) DBI::dbDisconnect(conn)
 	
 	return(tableInfo)
 }

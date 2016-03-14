@@ -4,7 +4,7 @@
 \alias{tdConn}
 \title{tdConn}
 \usage{
-tdConn(username = NULL, password = NULL,
+tdConn(username = getOption("tdPassword"), password = NULL,
   addr = "jdbc:teradata://megadew.corp.apple.com/charset=utf8",
   db = ifelse(addr == "jdbc:teradata://megadew.corp.apple.com/charset=utf8",
   "CDM_Special", ""), classPath = NULL, conn = NULL)

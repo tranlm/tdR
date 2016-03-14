@@ -1,12 +1,12 @@
-Package: cdmApple
-Title: Apple Customer Database Marketing
+Package: tdR
+Title: Teradata interaction and query package
 Version: 0.0.0.9000
 Authors@R: person("Linh", "Tran", email = "linh_m_tran@apple.com", role = c("aut", "cre"))
 Description: Helper functions for Teradata queries and other miscellaneous things.
 Depends:
     R (>= 3.2.2)
 Imports:
-    RJDBC
-License: Private
+    RJDBC, DBI
+License: MIT + file LICENSE
 LazyData: true
 RoxygenNote: 5.0.1

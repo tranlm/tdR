@@ -13,19 +13,7 @@ used in the Teradata connection.}
 \item{date}{Date desired for query information. Defaults to today's date. If
 overwritten, should be in the format YYMMDD.}
 
-\item{conn}{(Optional) Connection object for Teradata.}
-
-\item{username}{(Optional) Connection user name.}
-
-\item{password}{(Optional) Connection password.}
-
-\item{addr}{(Optional) String containing address of database to connect to.
-By default, is \emph{jdbc:teradata://megadew.corp.apple.com/charset=utf8}.}
-
-\item{db}{(Optional) Name of database to connect to. By default, is \emph{CDM_Special}.}
-
-\item{classPath}{(Optional) The location of the JDBC drivers. By default, will use the
-drivers included in the package.}
+\item{...}{Optional connection settings.}
 }
 \value{
 A \code{\link{data.frame}} object is returned with the Teradata query

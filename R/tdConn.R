@@ -46,27 +46,32 @@
 #' # conn = tdConn(<username>, <password>, addr="jdbc:teradata://redwood.corp.apple.com")
 #'
 #' @export
-tdConn = function(username=NULL, password=NULL, addr="jdbc:teradata://megadew.corp.apple.com/charset=utf8", db=ifelse(addr=="jdbc:teradata://megadew.corp.apple.com/charset=utf8", "CDM_Special", ""), classPath=NULL, conn=NULL) {
+tdConn = function(username=getOption("tdPassword"), password=NULL, addr="jdbc:teradata://megadew.corp.apple.com/charset=utf8", db=ifelse(addr=="jdbc:teradata://megadew.corp.apple.com/charset=utf8", "CDM_Special", ""), classPath=NULL, conn=NULL) {
 
 	## CHECKS ##
+	if(!is.null(username) && is.null(password) && length(names(username)) > 0) {
+		password = username
+		username = names(username)
+	}
 	if(is.null(conn) & (is.null(username) | is.null(password) | is.null(addr))) stop('No connection or profile provided.')
 	if(!is.null(conn) & class(conn)!="JDBCConnection") stop('Connection object needs to be JDBCConnection class.')
 	if(!is.null(conn) & class(conn)=="JDBCConnection") return(conn)
 
 	## CONNECTION STRING ##
 	if (is.null(conn)) {
-		pkg = require(RJDBC)
+		loadNamespace('DBI')
+		pkg = requireNamespace('RJDBC')
 		if(!pkg) {
 			stop("Package RJDBC not found.")
 		} else {
 			if(is.null(classPath)) {
-				pkg = find.package('cdmApple')
-				Sys.setenv(CLASSPATH = paste(paste0(pkg, c('/drv/tdgssconfig.jar', '/drv/terajdbc4.jar')), collapse=':'))
+				pkg = find.package('tdR')
+				CLASSPATH = paste(paste0(pkg, c('/drv/tdgssconfig.jar', '/drv/terajdbc4.jar')), collapse=':')
 			} else {
 				if (grepl("/$", classPath)) classPath = gsub("/$", "", classPath)
-				Sys.setenv(CLASSPATH = paste(paste0(classPath, c('/tdgssconfig.jar', '/terajdbc4.jar')), collapse=':'))
+				CLASSPATH = paste(paste0(classPath, c('/tdgssconfig.jar', '/terajdbc4.jar')), collapse=':')
 			}
-			drv = JDBC("com.teradata.jdbc.TeraDriver")
+			drv = RJDBC::JDBC("com.teradata.jdbc.TeraDriver", classPath=CLASSPATH)
 			if (is.null(db) | db=='') {
 				st = addr
 			} else if (grepl('[[:alpha:]]/', addr)) {
@@ -79,7 +84,7 @@ tdConn = function(username=NULL, password=NULL, addr="jdbc:teradata://megadew.co
 		}
 
 		## CONNECTION ##
-		conn = dbConnect(drv, st, username, password)
+		conn = DBI::dbConnect(drv, st, username, password)
 		attr(conn, "tmpConnection") = FALSE
 
 		return(conn)

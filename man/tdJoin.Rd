@@ -5,7 +5,7 @@
 \title{tdJoin}
 \usage{
 tdJoin(tdfO, tdf1, tdf2, index1, index2, col1 = NULL, col2 = NULL,
-  joinType = "inner", conn = NULL, ...)
+  joinType = "inner", ...)
 }
 \arguments{
 \item{tdfO}{Name of resulting Teradata to output.}
@@ -25,21 +25,8 @@ tdJoin(tdfO, tdf1, tdf2, index1, index2, col1 = NULL, col2 = NULL,
 \item{joinType}{Type of merge to perform. Needs to be one of following: \code{inner,
 left outer, right outer, full outer}.}
 
-\item{conn}{(Optional) Connection object for Teradata.}
-
-\item{...}{Additional \code{tdfX} and \code{indexX} to merge, where \code{X} is the count.}
-
-\item{username}{(Optional) Connection user name.}
-
-\item{password}{(Optional) Connection password.}
-
-\item{addr}{(Optional) String containing address of database to connect to.
-By default, is \emph{jdbc:teradata://megadew.corp.apple.com/charset=utf8}.}
-
-\item{db}{(Optional) Name of database to connect to. By default, is \emph{CDM_Special}.}
-
-\item{classPath}{(Optional) The location of the JDBC drivers. By default, will use the
-drivers included in the package.}
+\item{...}{Additional \code{tdfX} and \code{indexX} to merge, 
+where \code{X} is the count. Also can take optional connection settings.}
 }
 \value{
 The code creates the data table on the Teradata server via the

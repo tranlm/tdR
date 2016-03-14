@@ -45,15 +45,8 @@
 #' @param col2 Name of columns from second table to merge.
 #' @param joinType Type of merge to perform. Needs to be one of following: \code{inner,
 #' left outer, right outer, full outer}.
-#' @param conn (Optional) Connection object for Teradata.
-#' @param username (Optional) Connection user name.
-#' @param password (Optional) Connection password.
-#' @param addr (Optional) String containing address of database to connect to.
-#' By default, is \emph{jdbc:teradata://megadew.corp.apple.com/charset=utf8}.
-#' @param db (Optional) Name of database to connect to. By default, is \emph{CDM_Special}.
-#' @param classPath (Optional) The location of the JDBC drivers. By default, will use the
-#' drivers included in the package.
-#' @param ... Additional \code{tdfX} and \code{indexX} to merge, where \code{X} is the count.
+#' @param ... Additional \code{tdfX} and \code{indexX} to merge, 
+#' where \code{X} is the count. Also can take optional connection settings.
 #'
 #' @return The code creates the data table on the Teradata server via the
 #' \code{JDBCConnection} object. Names of each table created are returned 
@@ -77,7 +70,7 @@
 #' # tdJoin(<outputTable>, <inputTable1>, <inputTable2>, <index1>, <index2>, joinType="left")
 #'
 #' @export
-tdJoin = function(tdfO, tdf1, tdf2, index1, index2, col1=NULL, col2=NULL, joinType="inner", conn=NULL, ...) {
+tdJoin = function(tdfO, tdf1, tdf2, index1, index2, col1=NULL, col2=NULL, joinType="inner", ...) {
 
 	## CHECKS ##
 	args = list(...)
@@ -95,8 +88,8 @@ tdJoin = function(tdfO, tdf1, tdf2, index1, index2, col1=NULL, col2=NULL, joinTy
 
 	## TABLE CHECK ##
 	cat("Checking tables...")
-	if(dbExistsTable(conn, tdfO)) {
-		if (	attr(conn, "tmpConnection")) dbDisconnect(conn)
+	if(DBI::dbExistsTable(conn, tdfO)) {
+		if (	attr(conn, "tmpConnection")) DBI::dbDisconnect(conn)
 		stop(paste0(tdfO, " already exists."))
 	}
 
@@ -122,7 +115,7 @@ tdJoin = function(tdfO, tdf1, tdf2, index1, index2, col1=NULL, col2=NULL, joinTy
 		if (!toupper(indicies[i]) %in% toupper(tmpColumns)) indexMissing = c(indexMissing, indicies[i])
 	}
 	if (!is.null(indexMissing)) {
-		if (	attr(conn, "tmpConnection")) dbDisconnect(conn)
+		if (	attr(conn, "tmpConnection")) DBI::dbDisconnect(conn)
 		stop(gettextf("The following indicies were not found in the tables: %s", paste(indexMissing, collapse=", ")))
 	}
 	# renames duplicate indicies
@@ -166,7 +159,7 @@ tdJoin = function(tdfO, tdf1, tdf2, index1, index2, col1=NULL, col2=NULL, joinTy
 	cat("done.\n")
 
 	## Connection ##
-	if (	attr(conn, "tmpConnection")) dbDisconnect(conn)
+	if (	attr(conn, "tmpConnection")) DBI::dbDisconnect(conn)
 
 	invisible(tdfO)
 

@@ -24,14 +24,7 @@
 #'
 #' @param user Username to grab CPU use from. Defaults to the \code{username}
 #' used in the Teradata connection.
-#' @param conn (Optional) Connection object for Teradata.
-#' @param username (Optional) Connection user name.
-#' @param password (Optional) Connection password.
-#' @param addr (Optional) String containing address of database to connect to.
-#' By default, is \emph{jdbc:teradata://megadew.corp.apple.com/charset=utf8}.
-#' @param db Name of database to connect to. By default, is \emph{CDM_Special}.
-#' @param classPath The location of the JDBC drivers. By default, will use the
-#' drivers included in the package.
+#' @param ... Optional connection settings.
 #'
 #' @return A \code{data.frame} object is returned with all of the Teradata
 #' spool information.
@@ -65,7 +58,7 @@ tdSpool = function(user="user", ...) {
 	tableInfo = td(query, conn=conn)
 
 	## Connection ##
-	if (	attr(conn, "tmpConnection")) dbDisconnect(conn)
+	if (	attr(conn, "tmpConnection")) DBI::dbDisconnect(conn)
 
 	return(tableInfo)
 }

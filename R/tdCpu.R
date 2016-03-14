@@ -26,14 +26,7 @@
 #' used in the Teradata connection.
 #' @param date Date desired for query information. Defaults to today's date. If
 #' overwritten, should be in the format YYMMDD.
-#' @param conn (Optional) Connection object for Teradata.
-#' @param username (Optional) Connection user name.
-#' @param password (Optional) Connection password.
-#' @param addr (Optional) String containing address of database to connect to.
-#' By default, is \emph{jdbc:teradata://megadew.corp.apple.com/charset=utf8}.
-#' @param db (Optional) Name of database to connect to. By default, is \emph{CDM_Special}.
-#' @param classPath (Optional) The location of the JDBC drivers. By default, will use the
-#' drivers included in the package.
+#' @param ... Optional connection settings.
 #'
 #' @return A \code{\link{data.frame}} object is returned with the Teradata query
 #' information of the specified date.
@@ -78,7 +71,7 @@ tdCpu = function(user="user", date=format(as.Date(Sys.time()), "%y%m%d"), ...) {
 	tableInfo = td(query, conn=conn)
 
 	## Connection ##
-	if (	attr(conn, "tmpConnection")) dbDisconnect(conn)
+	if (	attr(conn, "tmpConnection")) DBI::dbDisconnect(conn)
 
 	return(tableInfo)
 }

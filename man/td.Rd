@@ -9,19 +9,7 @@ td(query = "", ...)
 \arguments{
 \item{query}{Query string to send to Teradata.}
 
-\item{conn}{(Optional) Connection object for Teradata.}
-
-\item{username}{(Optional) Connection user name.}
-
-\item{password}{(Optional) Connection password.}
-
-\item{addr}{(Optional) String containing address of database to connect to.
-By default, is \emph{jdbc:teradata://megadew.corp.apple.com/charset=utf8}.}
-
-\item{db}{(Optional) Name of database to connect to. By default, is \emph{CDM_Special}.}
-
-\item{classPath}{(Optional) The location of the JDBC drivers. By default, will use the
-drivers included in the package.}
+\item{...}{Optional connection settings.}
 }
 \value{
 If no data is returned from query, then an \code{\link{invisible}} 

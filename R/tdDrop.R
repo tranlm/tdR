@@ -1,4 +1,4 @@
-# TODO: Function to send queries and grab results (if any)
+# TODO: Function to delete tables from Teradata
 #
 # Author: Linh Tran
 # Date: Mar 10, 2016
@@ -6,9 +6,9 @@
 ###############################################################################
 
 
-#' @title td
+#' @title tdDrop
 #'
-#' @description Sends queries to Teradata. This code is specifically designed
+#' @description Drops tables from Teradata. This code is specifically designed
 #' for connectivity to Teradata servers using OSX at Apple using JDBC drivers
 #' and should be updated if connected to other sources. Can take a JDBC connection
 #' object (\code{conn}) if provided. If no JDBC connection is provided, then
@@ -22,15 +22,11 @@
 #' to the function (or one is found globally), then the connection remains
 #' open.
 #'
-#' @details Uses the v15.10.00.33 release (12 Jan 2016) tdgssconfig.jar and
-#' terajdbc4.jar drivers.
-#'
-#' @param query Query string to send to Teradata.
+#' @param tables String vector of Teradata tables to drop
 #' @param ... Optional connection settings.
 #'
-#' @return If no data is returned from query, then an \code{\link{invisible}} 
-#' object is returned. Otherwise, a \code{\link{data.frame}} object with all 
-#' data queried will be returned.
+#' @return An \code{\link{invisible}} object containing the tables dropped 
+#' is returned.
 #'
 #' @seealso 
 #' \code{\link{tdConn}} for connection, \code{\link{tdDisk}} for disk usage,
@@ -39,44 +35,51 @@
 #' 
 #' @examples
 #' ## NOT RUN ##
-#' ## Runs a quick query based on connection profile
-#' # td("select count(*) from ICDB_PERSON", username=<username>, password=<password>, db="GCA")
+#' ## Runs a quick drop query based on connection profile
+#' # tdDrop(<tableName>, username=<username>, password=<password>, db="GCA")
 #'
 #' ## Runs query using a separately established connection
 #' # conn = tdConn(<username>, <password>, db="GCA")
-#' # td("select count(*) from ICDB_PERSON", conn=conn)
+#' # tdDrop(<tableName>, conn=conn)
 #'
-#' ## Uses same connection, but allows code to find globally
-#' # td("select count(*) from ICDB_PERSON")
+#' ## Uses same connection, but allows code to find globally. 
+#' # Can also drop multiple tables. 
+#' # tdDrop(c(<table1Name>, <table2Name>))
 #'
 #' @export
-td = function(query="", ...) {
-
-	if (query=="") stop("No query statement given.")
-
+tdDrop = function(tables="", ...) {
+	
+	if (is.null(tables) | all(tables=='')) stop("No Teradata table specified.")
+	tables = strsplit(toupper(tables), "\\.")
+	if (any(unlist(lapply(tables, length))>2)) stop("Table names can only have up to 1 period.")
+	
 	## Connection ##
 	conn = tdCheckConn(list(...))
-
-	## Query ##
-	rs = try(DBI::dbGetQuery(conn, query), TRUE)
+	
+	## Tables ##
+	db = td("select database", conn=conn)[1,1]
+	tables = do.call("rbind", lapply(tables, function(x) {
+		if (length(x)==1) {
+			return(c(db,x))
+		} else if (length(x)==2) {
+			return(x)
+		} else {
+			stop("Problem with the table names.")
+		}
+	}))
+	
+	## Tables ##
+	removed = NULL
+	for(i in 1:nrow(tables)) {
+		res = try(td(sprintf('drop table %s.%s', tables[i,1], tables[i,2])), TRUE)
+		if (!inherits(res, "try-error")) removed = c(removed, paste(tables[i,1], tables[i,2], sep="."))
+		rm(res)
+	}
 
 	## Connection ##
 	if (attr(conn, "tmpConnection")) DBI::dbDisconnect(conn)
-
+	
 	## Output ##
-	if(grepl("invalid value from generic function ", rs[1])) {
-		invisible(NULL)
-	} else if (!inherits(rs, "try-error")) {
-		return(rs)
-	} else {
-		err = attr(rs, "condition")
-		pos = regexpr('\\(\\[Teradata Database\\]|\\[Teradata', err)
-		rs = substring(err, pos)
-		if (nchar(query)>800) {
-			msg = rs
-		} else msg = paste("Query:\n", query, "\n", rs)
-		stop(msg)
-	}
-	invisible(rs)
+	invisible(removed)
 	
 }
