@@ -14,8 +14,14 @@
 #' connected to other sources. If no JDBC connection is provided (\code{tdConn}),
 #' then a connection is attempted using the \code{user}, and \code{password} provided.
 #'
-#' @details Uses the v15.10.00.33 release (12 Jan 2016) tdgssconfig.jar and
-#' terajdbc4.jar drivers.
+#' @details If desired, you can define your username and password in the .Rprofile 
+#' file using the command \code{options(tdPassword = c(<username>="<password>"))}, which 
+#' will then automatically assign the password in the background each time R is started. 
+#' This then allows you to connect without having to enter your username and password 
+#' manually each time you connect.
+#' 
+#' The JDBC driver included uses the v15.10.00.33 release (12 Jan 2016) 
+#' tdgssconfig.jar and terajdbc4.jar drivers.
 #'
 #' @param username Connection user name.
 #' @param password Connection password.
