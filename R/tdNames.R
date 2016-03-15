@@ -71,7 +71,7 @@ tdNames = function(tables=NULL, ...) {
 	conn = tdCheckConn(list(...))
 	
 	## Tables ##
-	db = td("select database", conn=conn)[1,1]
+	db = toupper(td("select database", conn=conn)[1,1])
 	tables = do.call("rbind", lapply(tables, function(x) {
 		if (length(x)==1) {
 			return(c(db,x))
@@ -97,6 +97,7 @@ tdNames = function(tables=NULL, ...) {
 	tableInfo$TableName = gsub("[[:space:]]*$", "", tableInfo$TableName)
 	tableInfo$ColumnName = gsub("[[:space:]]*$", "", tableInfo$ColumnName)
 	tableInfo$ColumnFormat = gsub("[[:space:]]*$", "", tableInfo$ColumnFormat)
+	if (nrow(tableInfo)==0) stop(paste("No table details found for:", paste(paste(tables[,1], tables[,2], sep="."), collapse=", ")))
 	tableMissing = NULL	
 	for(i in 1:nrow(tables)) if (!tables[i,2] %in% toupper(tableInfo$TableName)) tableMissing = c(tableMissing, tables[i,2])
 	if (!is.null(tableMissing)) warning(paste("The following tables were not found:", paste(tableMissing, collapse=", ")))

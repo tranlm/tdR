@@ -24,3 +24,37 @@ R CMD INSTALL tdR-master-XXXX
 
 where XXXX is the suffix added to the end of the uncompressed folder.
 
+
+An example of the typical R script workflow
+=======
+```
+library(tdR)
+
+## ESTABLISH CONNECTION ##
+## nb. Do not change the name if you want subsequent code to discover the connection automatically
+conn = tdConn()
+
+## ORGANIZE DATA ##
+td("create table xxxx as (...)")
+
+## DEBUGGING ##
+tdDim("xxxx")
+tdNames("xxxx")
+tdHead("xxxx")
+tdShow("xxxx")
+tdCpu()
+tdDisk()
+tdSpool()
+
+## EXPORT TO R ##
+ourData = td("sel * from xxxx")
+
+## ANALYSES ##
+## e.g. Regression, plots, summaries, etc.
+plot(y ~ x, data=ourData)
+
+## DISCONNECT ##
+tdClose()
+```
+
+
