@@ -57,4 +57,12 @@ plot(y ~ x, data=ourData)
 tdClose()
 ```
 
+Alternatively, you can write a SQL script and submit it with R using the following commands. Please note that in this approach, each command has to end with a semicolon. If a semicolon is needed in the code outside of this purpose, please precede it with a forward slash (/), e.g. where column_name = "/;"
+=======
+
+```
+library(tdR)
+tdFile(<file_name.sql>)
+```
+
 
