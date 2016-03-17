@@ -74,7 +74,7 @@ td = function(query="", ...) {
 		rs = substring(err, pos)
 		if (nchar(query)>800) {
 			msg = rs
-		} else msg = paste("Query:\n", query, "\n", rs)
+		} else msg = paste(rs, "Query:\n", query, "\n")
 		stop(msg)
 	}
 	invisible(rs)
