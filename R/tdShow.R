@@ -29,7 +29,7 @@
 #' a new subset of the table and querying that subset. If the Teradata code 
 #' is unable to be determined, a value of \code{NA} will be returned.
 #' 
-#' @param tables String vector of names of tables to get Teradata code from.
+#' @param table String of name of table to get Teradata code from.
 #' @param ... Optional connection settings.
 #'
 #' @return Returns a string \code{\link{vector}} of the the Teradata code. 
@@ -52,18 +52,20 @@
 #' # tdShow(c("ICDB_PERSON", "ICDB_PERSON_X"))
 #'
 #' @export
-tdShow = function(tables=NULL, ...) {
+tdShow = function(table=NULL, ...) {
 	
-	if (is.null(tables) | all(tables=='')) stop("No Teradata table specified.")
-	tables = strsplit(toupper(tables), "\\.")
-	if (any(unlist(lapply(tables, length))>2)) stop("Tables name can only have up to 1 period.")
+	tmp = paste(substitute(list(table)))[-1]
+	if (!exists(tmp)) table=tmp
+	if (is.null(table) | all(table=='')) stop("No Teradata table specified.")
+	table = strsplit(toupper(table), "\\.")
+	if (any(unlist(lapply(table, length))>2)) stop("table name can only have up to 1 period.")
 	
 	## Connection ##
 	conn = tdCheckConn(list(...))
 	
-	## Tables ##
+	## table ##
 	db = td("select database", conn=conn)[1,1]
-	tables = do.call("rbind", lapply(tables, function(x) {
+	table = do.call("rbind", lapply(table, function(x) {
 		if (length(x)==1) {
 			return(c(db,x))
 		} else if (length(x)==2) {
@@ -73,10 +75,13 @@ tdShow = function(tables=NULL, ...) {
 		}
 	}))
 	
-	showResults = rep('', nrow(tables))
-	for(i in 1:nrow(tables)) {
-		tmpTry = try(DBI::dbGetQuery(conn, sprintf('show table %s.%s', tables[i,1], tables[i,2]))[1,1], TRUE)
-		if (!inherits(tmpTry, 'try-error')) showResults[i] = tmpTry
+	showResults = rep('', nrow(table))
+	tmpTry = try(DBI::dbGetQuery(conn, sprintf('show table %s.%s', table[1,1], table[1,2]))[1,1], TRUE)
+	if (inherits(tmpTry, 'try-error')) {
+		tmpTry = try(DBI::dbGetQuery(conn, sprintf('show select * from %s.%s', table[1,1], table[1,2]))[1,1], TRUE)
+	}
+	if (!inherits(tmpTry, 'try-error')) {
+		showResults[1] = tmpTry
 	}
 	showResults = paste(gsub("\\r", "\\\n", showResults), "\n")
 

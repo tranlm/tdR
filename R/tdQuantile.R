@@ -61,6 +61,8 @@
 #' @export
 tdQuantile = function(table=NULL, probs=0.5, cols=NULL, where="", ...) {
 
+	tmp = paste(substitute(list(table)))[-1]
+	if (!exists(tmp)) table=tmp
 	if (is.null(table) | table=='') stop("No Teradata table specified.")
 	if (length(table)>1) stop("Only 1 Teradata table can be supplied.")
 	table = strsplit(toupper(table), "\\.")

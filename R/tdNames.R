@@ -29,7 +29,7 @@
 #' the table and querying that subset. If the index is unable to be determined, 
 #' a value of \code{NA} will be returned.
 #' 
-#' @param tables String vector of names of tables to get column names from.
+#' @param table String vector of name of table to get column names from.
 #' @param ... Optional connection settings.
 #'
 #' @return Returns a \code{\link{data.frame}} object with the following items:  
@@ -61,18 +61,20 @@
 #' # tdNames(c("ICDB_PERSON", "ICDB_PERSON_X"))
 #'
 #' @export
-tdNames = function(tables=NULL, ...) {
+tdNames = function(table=NULL, ...) {
 	
-	if (is.null(tables) | all(tables=='')) stop("No Teradata table specified.")
-	tables = strsplit(toupper(tables), "\\.")
-	if (any(unlist(lapply(tables, length))>2)) stop("Tables name can only have up to 1 period.")
+	tmp = paste(substitute(list(table)))[-1]
+	if (!exists(tmp)) table=tmp
+	if (is.null(table) | all(table=='')) stop("No Teradata table specified.")
+	table = strsplit(toupper(table), "\\.")
+	if (any(unlist(lapply(table, length))>2)) stop("table name can only have up to 1 period.")
 			
 	## Connection ##
 	conn = tdCheckConn(list(...))
 	
-	## Tables ##
+	## table ##
 	db = toupper(td("select database", conn=conn)[1,1])
-	tables = do.call("rbind", lapply(tables, function(x) {
+	table = do.call("rbind", lapply(table, function(x) {
 		if (length(x)==1) {
 			return(c(db,x))
 		} else if (length(x)==2) {
@@ -82,7 +84,7 @@ tdNames = function(tables=NULL, ...) {
 		}
 	}))
 	
-	st = paste(paste0("upper(DatabaseName)='", tables[,1], "' and upper(TABLENAME)='",tables[,2], "'"), collapse=" or ")
+	st = paste(paste0("upper(DatabaseName)='", table[,1], "' and upper(TABLENAME)='",table[,2], "'"), collapse=" or ")
 	query = sprintf("select
 				DatabaseName, 
 				TableName, 
@@ -97,17 +99,17 @@ tdNames = function(tables=NULL, ...) {
 	tableInfo$TableName = gsub("[[:space:]]*$", "", tableInfo$TableName)
 	tableInfo$ColumnName = gsub("[[:space:]]*$", "", tableInfo$ColumnName)
 	tableInfo$ColumnFormat = gsub("[[:space:]]*$", "", tableInfo$ColumnFormat)
-	if (nrow(tableInfo)==0) stop(paste("No table details found for:", paste(paste(tables[,1], tables[,2], sep="."), collapse=", ")))
+	if (nrow(tableInfo)==0) stop(paste("No table details found for:", paste(paste(table[,1], table[,2], sep="."), collapse=", ")))
 	tableMissing = NULL	
-	for(i in 1:nrow(tables)) if (!tables[i,2] %in% toupper(tableInfo$TableName)) tableMissing = c(tableMissing, tables[i,2])
-	if (!is.null(tableMissing)) warning(paste("The following tables were not found:", paste(tableMissing, collapse=", ")))
+	for(i in 1:nrow(table)) if (!table[i,2] %in% toupper(tableInfo$TableName)) tableMissing = c(tableMissing, table[i,2])
+	if (!is.null(tableMissing)) warning(paste("The following table were not found:", paste(tableMissing, collapse=", ")))
 	
 	## Primary / secondary indices ##
 	tableInfo$Index = NA
-	for(i in 1:nrow(tables)) {
-		tableShow = try(DBI::dbGetQuery(conn, sprintf("show table %s.%s", tables[i,1], tables[i,2]))[1,1], TRUE)
-		if (!inherits(tableShow, "try-error")) {
-			tmp = substring(tableShow, regexpr("PRIMARY INDEX \\(", tableShow)+14)
+	for(i in 1:nrow(table)) {
+		tablehow = try(DBI::dbGetQuery(conn, sprintf("show table %s.%s", table[i,1], table[i,2]))[1,1], TRUE)
+		if (!inherits(tablehow, "try-error")) {
+			tmp = substring(tablehow, regexpr("PRIMARY INDEX \\(", tablehow)+14)
 			m = gregexpr("\\([^)]*\\)", tmp)
 			indicies = regmatches(tmp, m)[[1]]
 			indicies = lapply(indicies, function(x) {
@@ -120,7 +122,7 @@ tdNames = function(tables=NULL, ...) {
 			if (length(keys)>1) {
 				sec.keys = gsub("^*[[:space:]]|[[:space:]]*$", "", keys[[2]])
 			} else sec.keys=NULL
-			idx = toupper(tableInfo$DatabaseName)==tables[i,1] & toupper(tableInfo$TableName)==tables[i,2]
+			idx = toupper(tableInfo$DatabaseName)==table[i,1] & toupper(tableInfo$TableName)==table[i,2]
 			tableInfo$Index[idx] = ifelse(tableInfo$ColumnName[idx] %in% prim.keys, 1, ifelse(tableInfo$ColumnName[idx] %in% sec.keys, 2, 0))
 		}
 	}
