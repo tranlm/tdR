@@ -24,6 +24,12 @@ R CMD INSTALL tdR-master-XXXX
 
 where XXXX is the suffix added to the end of the uncompressed folder.
 
+### Teradata information
+For convenience, you can store your teradata username and password in the .Rprofile file, normally stored in the user home directory. It should be stored as
+
+```shell
+options(tdPassword=c(username="password"))
+```
 
 An example of the typical R script workflow
 =======
