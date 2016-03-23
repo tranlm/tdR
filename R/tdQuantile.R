@@ -53,10 +53,10 @@
 #'
 #' ## Runs query using a separately established connection. Selects only two columns.
 #' # conn = tdConn(<username>, <password>, db="GCA")
-#' # tdSummary("ICDB_PERSON", c("PERSON_ID", "INDIV_ID"), conn=conn)
+#' # tdQuantilesy("ICDB_PERSON", c("PERSON_ID", "INDIV_ID"), conn=conn)
 #'
 #' ## Uses same connection, but allows code to find globally. Also subsets on PERSON_ID.
-#' # tdSummary("ICDB_PERSON", where="PERSON_ID mod 2 = 0")
+#' # tdQuantiles("ICDB_PERSON", where="PERSON_ID mod 2 = 0")
 #'
 #' @export
 tdQuantile = function(table=NULL, probs=0.5, cols=NULL, where="", ...) {

@@ -57,8 +57,8 @@
 #' # conn = tdConn(<username>, <password>, db="GCA")
 #' # tdNames("ICDB_PERSON", conn=conn)
 #'
-#' ## Uses same connection, but allows code to find globally. Also done for multiple tables.
-#' # tdNames(c("ICDB_PERSON", "ICDB_PERSON_X"))
+#' ## Uses same connection, but allows code to find globally. 
+#' # tdNames("ICDB_PERSON")
 #'
 #' @export
 tdNames = function(table=NULL, ...) {

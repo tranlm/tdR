@@ -4,14 +4,15 @@
 \alias{tdCpu}
 \title{tdCpu}
 \usage{
-tdCpu(user = "user", date = format(as.Date(Sys.time()), "\%y\%m\%d"), ...)
+tdCpu(user = "user", date = as.Date(Sys.time()), ...)
 }
 \arguments{
 \item{user}{Username to grab CPU use from. Defaults to the \code{username}
 used in the Teradata connection.}
 
 \item{date}{Date desired for query information. Defaults to today's date. If
-overwritten, should be in the format YYMMDD.}
+overwritten, can be in either the date format for R or the Teradata format
+YYMMDD.}
 
 \item{...}{Optional connection settings.}
 }
@@ -49,7 +50,7 @@ open.
 }
 \seealso{
 \code{\link{tdConn}} for connection, \code{\link{tdDisk}} for disk usage,
-\code{\link{tdSpool}} for spool usage, and \code{\link{td}} for general 
+\code{\link{tdSpool}} for spool usage, and \code{\link{td}} for general
 queries
 }
 

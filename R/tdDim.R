@@ -22,7 +22,7 @@
 #' to the function (or one is found globally), then the connection remains
 #' open.
 #'
-#' @param tables String vector of names of tables to get table dimensions from.
+#' @param table String vector of name of table to get table dimensions from.
 #' @param where String statement to subset table with. 
 #' @param ... Optional connection settings.
 #'
@@ -42,22 +42,24 @@
 #' # conn = tdConn(<username>, <password>, db="GCA")
 #' # tdDim("ICDB_PERSON", conn=conn)
 #'
-#' ## Uses same connection, but allows code to find globally. Also used for multiple tables.
-#' # tdDim(c("ICDB_PERSON", "ICDB_PERSON_X"))
+#' ## Uses same connection, but allows code to find globally. 
+#' # tdDim("ICDB_PERSON")
 #'
 #' @export
-tdDim = function(tables=NULL, where="", ...) {
+tdDim = function(table=NULL, where="", ...) {
 	
-	if (is.null(tables) | all(tables=='')) stop("No Teradata table specified.")
-	tables = strsplit(toupper(tables), "\\.")
-	if (any(unlist(lapply(tables, length))>2)) stop("Table names can only have up to 1 period.")
+	tmp = paste(substitute(list(table)))[-1]
+	if (!exists(tmp)) table=tmp
+	if (is.null(table) | all(table=='')) stop("No Teradata table specified.")
+	table = strsplit(toupper(table), "\\.")
+	if (any(unlist(lapply(table, length))>2)) stop("Table names can only have up to 1 period.")
 	
 	## Connection ##
 	conn = tdCheckConn(list(...))
 	
-	## Tables ##
+	## table ##
 	db = td("select database", conn=conn)[1,1]
-	tables = do.call("rbind", lapply(tables, function(x) {
+	table = do.call("rbind", lapply(table, function(x) {
 		if (length(x)==1) {
 			return(c(db,x))
 		} else if (length(x)==2) {
@@ -70,15 +72,10 @@ tdDim = function(tables=NULL, where="", ...) {
 	## Subset ##
 	if (where!="") where = paste("where", where)
 	
-	tableDim = NULL
-	for(i in 1:nrow(tables)) {
-		tmpResult = DBI::dbGetQuery(conn, sprintf("SELECT trim(DatabaseName), trim(TableName), count(columnname) as ncol FROM DBC.Columns WHERE upper(DatabaseName)='%s' AND upper(TableName)='%s' group by 1,2;", tables[i,1], tables[i,2]))
-		if (nrow(tmpResult)==0) tmpResult = data.frame(DatabaseName=tables[i,1], TableName=tables[i,2], ncol=NA)
-		tmpRows = try(DBI::dbGetQuery(conn, sprintf("select cast(count(*) as dec(18,0)) from %s.%s %s;", tables[i,1], tables[i,2], where))[1,1], TRUE)
-		tmpResult$nrow = ifelse(inherits(tmpRows, 'try-error'), NA, tmpRows)
-		tableDim = rbind(tableDim, tmpResult)
-		rm(tmpRows)
-	}
+	tableDim = DBI::dbGetQuery(conn, sprintf("SELECT count(columnname) as ncol FROM DBC.Columns WHERE upper(DatabaseName)='%s' AND upper(TableName)='%s';", table[1,1], table[1,2]))
+	if (nrow(tableDim)==0) tableDim = data.frame(ncol=NA)
+	tmpRows = try(DBI::dbGetQuery(conn, sprintf("select cast(count(*) as dec(18,0)) from %s.%s %s;", table[1,1], table[1,2], where))[1,1], TRUE)
+	tableDim$nrow = ifelse(inherits(tmpRows, 'try-error'), NA, tmpRows)
 	
 	## Connection ##
 	if (	attr(conn, "tmpConnection")) DBI::dbDisconnect(conn)

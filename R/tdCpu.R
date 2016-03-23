@@ -25,17 +25,18 @@
 #' @param user Username to grab CPU use from. Defaults to the \code{username}
 #' used in the Teradata connection.
 #' @param date Date desired for query information. Defaults to today's date. If
-#' overwritten, should be in the format YYMMDD.
+#' overwritten, can be in either the date format for R or the Teradata format
+#' YYMMDD.
 #' @param ... Optional connection settings.
 #'
 #' @return A \code{\link{data.frame}} object is returned with the Teradata query
 #' information of the specified date.
 #'
-#' @seealso 
+#' @seealso
 #' \code{\link{tdConn}} for connection, \code{\link{tdDisk}} for disk usage,
-#' \code{\link{tdSpool}} for spool usage, and \code{\link{td}} for general 
+#' \code{\link{tdSpool}} for spool usage, and \code{\link{td}} for general
 #' queries
-#' 
+#'
 #' @examples
 #' ## NOT RUN ##
 #' ## Connect to default data warehouse and data base
@@ -49,7 +50,7 @@
 #' # tdCpu()
 #'
 #' @export
-tdCpu = function(user="user", date=format(as.Date(Sys.time()), "%y%m%d"), ...) {
+tdCpu = function(user="user", date=as.Date(Sys.time()), ...) {
 
 	## Connection ##
 	conn = tdCheckConn(list(...))
@@ -65,7 +66,7 @@ tdCpu = function(user="user", date=format(as.Date(Sys.time()), "%y%m%d"), ...) {
 		, Querytext
 		, errortext
 		FROM dbc.qrylog
-			where cast(starttime as date) = 1%s and username = %s
+			where cast(starttime as date) = '%s' and username = %s
 		order by 1 asc;",
 	date, user)
 	tableInfo = td(query, conn=conn)

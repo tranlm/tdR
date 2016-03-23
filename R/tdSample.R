@@ -23,9 +23,9 @@
 #' open.
 #'
 #' @details 
-#' Whereas this fucntion grabs a random sample, \link{\code{tdhead}} will grab the 
+#' Whereas this fucntion grabs a random sample, \code{\link{tdHead}} will grab the 
 #' top observations in the table. Thus, this function will be more CPU intensive 
-#' than \link{\code{tdhead}}.
+#' than \code{\link{tdHead}}.
 #' 
 #' @param table A string stating the Teradata table name.
 #' @param n A single integer, representing the number of rows desired. Defaults to 10.
@@ -44,18 +44,18 @@
 #' @examples
 #' ## NOT RUN (will also result in errors due to user restrictions) ##
 #' ## Runs a quick query based on connection profile
-#' # tdSummary("ICDB_PERSON", username=<username>, password=<password>, db="GCA")
+#' # tdSample("ICDB_PERSON", username=<username>, password=<password>, db="GCA")
 #'
 #' ## Runs query using a separately established connection. Selects 20 observations 
 #' # from only two columns, subset by even Person_Id. 
 #' # conn = tdConn(<username>, <password>, db="GCA")
-#' # tdSummary("ICDB_PERSON", 20, c("PERSON_ID", "INDIV_ID"), "PERSON_ID mod 2 = 0", conn=conn)
+#' # tdSample("ICDB_PERSON", 20, c("PERSON_ID", "INDIV_ID"), "PERSON_ID mod 2 = 0", conn=conn)
 #'
 #' ## Uses same connection, but allows code to find globally. Also subsets on PERSON_ID. 
-#' # tdSummary("ICDB_PERSON")
+#' # tdSample("ICDB_PERSON")
 #'
 #' @export
-tdSummary = function(table=NULL, n=10, cols=NULL, where="", ...) {
+tdSample = function(table=NULL, n=10, cols=NULL, where="", ...) {
 	
 	tmp = paste(substitute(list(table)))[-1]
 	if (!exists(tmp)) table=tmp

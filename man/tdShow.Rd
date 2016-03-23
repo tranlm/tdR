@@ -4,10 +4,10 @@
 \alias{tdShow}
 \title{tdShow}
 \usage{
-tdShow(tables = NULL, ...)
+tdShow(table = NULL, ...)
 }
 \arguments{
-\item{tables}{String vector of names of tables to get Teradata code from.}
+\item{table}{String of name of table to get Teradata code from.}
 
 \item{...}{Optional connection settings.}
 }

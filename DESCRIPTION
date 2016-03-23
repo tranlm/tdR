@@ -1,6 +1,6 @@
 Package: tdR
 Title: Teradata interaction and query package
-Version: 0.0.0.9000
+Version: 0.0.1.0000
 Authors@R: person("Linh", "Tran", email = "linh_m_tran@apple.com", role = c("aut", "cre"))
 Description: Helper functions for Teradata queries and other miscellaneous things.
 Depends:

@@ -28,7 +28,7 @@
 #' If a literal ";" is desired within the code, an escape character of "\" 
 #' should precede it, e.g. \code{where column="\;"}. 
 #' 
-#' @param File File to submit to Teradata. 
+#' @param file File to submit to Teradata. 
 #' @param ... Optional connection settings.
 #'
 #' @return An \code{\link{invisible}} object is returned indicating whether 
