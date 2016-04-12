@@ -61,7 +61,7 @@ tdExists = function(table=NULL, ...) {
 	conn = tdCheckConn(list(...))
 	
 	## table ##
-	db = toupper(td("select database", conn=conn)[1,1])
+	db = toupper(td("select database;", conn=conn)[1,1])
 	table = do.call("rbind", lapply(table, function(x) {
 		if (length(x)==1) {
 			return(c(db,x))
@@ -73,7 +73,7 @@ tdExists = function(table=NULL, ...) {
 	}))
 	
 	st = paste(paste0("upper(DatabaseName)='", table[,1], "' and upper(TABLENAME)='",table[,2], "'"), collapse=" or ")
-	query = sprintf("select top 1 DatabaseName, TableName from DBC.COLUMNS where %s", st)
+	query = sprintf("select top 1 DatabaseName, TableName from DBC.COLUMNS where %s;", st)
 	tableInfo = td(query, conn=conn)
 	foo = nrow(tableInfo)>0
 	

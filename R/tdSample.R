@@ -68,7 +68,7 @@ tdSample = function(table=NULL, n=10, cols=NULL, where="", ...) {
 	conn = tdCheckConn(list(...))
 	
 	## Tables ##
-	db = td("select database", conn=conn)[1,1]
+	db = td("select database;", conn=conn)[1,1]
 	table = do.call("rbind", lapply(table, function(x) {
 		if (length(x)==1) {
 			return(c(db,x))
@@ -87,7 +87,7 @@ tdSample = function(table=NULL, n=10, cols=NULL, where="", ...) {
 	if (where!="") where = paste("where", where)
 
 	## Observations ##
-	tabObs = td(sprintf('select %s from %s.%s %s sample %d', cols, table[1,1], table[1,2], where, n), conn=conn)
+	tabObs = td(sprintf('select %s from %s.%s %s sample %d;', cols, table[1,1], table[1,2], where, n), conn=conn)
 	
 	## Connection ##
 	if (	attr(conn, "tmpConnection")) DBI::dbDisconnect(conn)

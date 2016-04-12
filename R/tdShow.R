@@ -64,7 +64,7 @@ tdShow = function(table=NULL, ...) {
 	conn = tdCheckConn(list(...))
 	
 	## table ##
-	db = td("select database", conn=conn)[1,1]
+	db = td("select database;", conn=conn)[1,1]
 	table = do.call("rbind", lapply(table, function(x) {
 		if (length(x)==1) {
 			return(c(db,x))
@@ -76,12 +76,12 @@ tdShow = function(table=NULL, ...) {
 	}))
 	
 	showResults = rep('', nrow(table))
-	tmpTry = try(DBI::dbGetQuery(conn, sprintf('show table %s.%s', table[1,1], table[1,2]))[1,1], TRUE)
+	tmpTry = try(td(sprintf('show table %s.%s;', table[1,1], table[1,2]), conn=conn)[1,1], TRUE)
 	if (inherits(tmpTry, 'try-error')) {
-		tmpTry = try(DBI::dbGetQuery(conn, sprintf('show view from %s.%s', table[1,1], table[1,2]))[1,1], TRUE)
+		tmpTry = try(td(sprintf('show view from %s.%s;', table[1,1], table[1,2]), conn=conn)[1,1], TRUE)
 	}
 	if (inherits(tmpTry, 'try-error')) {
-		tmpTry = try(DBI::dbGetQuery(conn, sprintf('show select * from %s.%s', table[1,1], table[1,2]))[1,1], TRUE)
+		tmpTry = try(td(sprintf('show select * from %s.%s;', table[1,1], table[1,2]), conn=conn)[1,1], TRUE)
 	}
 	if (!inherits(tmpTry, 'try-error')) {
 		showResults[1] = tmpTry

@@ -57,6 +57,7 @@ tdCpu = function(user="user", date=as.Date(Sys.time()), ...) {
 
 	query = sprintf(
 	"SELECT starttime
+		, ElapsedTime
 		, TotalIOCount                   TotalIO_ct
 		, AMPCPUTime
 		, ParserCPUTime
@@ -76,5 +77,3 @@ tdCpu = function(user="user", date=as.Date(Sys.time()), ...) {
 
 	return(tableInfo)
 }
-
-

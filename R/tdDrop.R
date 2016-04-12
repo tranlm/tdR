@@ -57,7 +57,7 @@ tdDrop = function(tables="", ...) {
 	conn = tdCheckConn(list(...))
 	
 	## Tables ##
-	db = td("select database", conn=conn)[1,1]
+	db = td("select database;", conn=conn)[1,1]
 	tables = do.call("rbind", lapply(tables, function(x) {
 		if (length(x)==1) {
 			return(c(db,x))
@@ -71,7 +71,7 @@ tdDrop = function(tables="", ...) {
 	## Tables ##
 	removed = NULL
 	for(i in 1:nrow(tables)) {
-		res = try(td(sprintf('drop table %s.%s', tables[i,1], tables[i,2])), TRUE)
+		res = try(td(sprintf('drop table %s.%s;', tables[i,1], tables[i,2]), conn=conn), TRUE)
 		if (!inherits(res, "try-error")) removed = c(removed, paste(tables[i,1], tables[i,2], sep="."))
 		rm(res)
 	}

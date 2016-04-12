@@ -1,12 +1,12 @@
 Package: tdR
 Title: Teradata interaction and query package
-Version: 0.0.1.0000
-Authors@R: person("Linh", "Tran", email = "linh_m_tran@apple.com", role = c("aut", "cre"))
+Version: 0.0.1.1000
+Author: Linh Tran
+Maintainer: Linh Tran <linh_m_tran@apple.com>
 Description: Helper functions for Teradata queries and other miscellaneous things.
-Depends:
-    R (>= 3.2.2)
-Imports:
-    RJDBC, DBI
+Depends: R (>= 3.2.2), RJDBC
+Imports: RJDBC, DBI
 License: MIT + file LICENSE
 LazyData: true
 RoxygenNote: 5.0.1
+Packaged: 2016-03-24 00:20:21 UTC; tranlm

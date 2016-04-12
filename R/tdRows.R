@@ -1,4 +1,4 @@
-# TODO: Function to grab Teradata table dimensions
+# TODO: Function to grab Teradata table rows
 # 
 # Author: Linh Tran
 # Date: Mar 11, 2016
@@ -6,9 +6,9 @@
 ###############################################################################
 
 
-#' @title tdDim
+#' @title tdRows
 #'
-#' @description Gets the dimensions in Teradata tables. This code is specifically 
+#' @description Gets the rows in Teradata tables. This code is specifically 
 #' designed for connectivity to Teradata servers using OSX at Apple using JDBC 
 #' drivers and should be updated if connected to other sources. Can take a JDBC 
 #' connection object (\code{conn}) if provided. If no JDBC connection is provided, 
@@ -26,7 +26,7 @@
 #' @param where String statement to subset table with. 
 #' @param ... Optional connection settings.
 #'
-#' @return Returns a \code{\link{data.frame}} of the Teradata table dimensions. 
+#' @return Returns a the number of Teradata table rows. 
 #' 
 #' @seealso 
 #' \code{\link{tdConn}} for connection, \code{\link{tdNames}} for table names,
@@ -36,17 +36,17 @@
 #' @examples
 #' ## NOT RUN (will also result in errors due to user restrictions) ##
 #' ## Runs a quick query based on connection profile
-#' # tdDim("ICDB_PERSON", username=<username>, password=<password>, db="GCA")
+#' # tdRows("ICDB_PERSON", username=<username>, password=<password>, db="GCA")
 #'
 #' ## Runs query using a separately established connection
 #' # conn = tdConn(<username>, <password>, db="GCA")
-#' # tdDim("ICDB_PERSON", conn=conn)
+#' # tdRows("ICDB_PERSON", conn=conn)
 #'
 #' ## Uses same connection, but allows code to find globally. 
-#' # tdDim("ICDB_PERSON")
+#' # tdRows("ICDB_PERSON")
 #'
 #' @export
-tdDim = function(table=NULL, where="", ...) {
+tdRows = function(table=NULL, where="", ...) {
 	
 	tmp = paste(substitute(list(table)))[-1]
 	if (!exists(tmp)) table=tmp
@@ -72,14 +72,11 @@ tdDim = function(table=NULL, where="", ...) {
 	## Subset ##
 	if (where!="") where = paste("where", where)
 	
-	tableDim = td(sprintf("SELECT count(columnname) as ncol FROM DBC.Columns WHERE upper(DatabaseName)='%s' AND upper(TableName)='%s';", table[1,1], table[1,2]), conn=conn)
-	if (nrow(tableDim)==0) tableDim = data.frame(ncol=NA)
-	tmpRows = try(td(sprintf("select cast(count(*) as dec(18,0)) from %s.%s %s;", table[1,1], table[1,2], where), conn=conn)[1,1], TRUE)
-	tableDim$nrow = ifelse(inherits(tmpRows, 'try-error'), NA, tmpRows)
+	tmpRows = td(sprintf("select cast(count(*) as bigint) from %s.%s %s;", table[1,1], table[1,2], where), conn=conn)[1,1]
 	
 	## Connection ##
 	if (	attr(conn, "tmpConnection")) DBI::dbDisconnect(conn)
 	
-	return(tableDim)
+	return(tmpRows)
 }
 

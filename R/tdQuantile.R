@@ -74,8 +74,8 @@ tdQuantile = function(table=NULL, probs=0.5, cols=NULL, where="", ...) {
 	conn = tdCheckConn(list(...))
 
 	## Tables ##
-	user = td("select user", conn=conn)[1,1]
-	db = td("select database", conn=conn)[1,1]
+	user = td("select user;", conn=conn)[1,1]
+	db = td("select database;", conn=conn)[1,1]
 	table = do.call("rbind", lapply(table, function(x) {
 		if (length(x)==1) {
 			return(c(db,x))

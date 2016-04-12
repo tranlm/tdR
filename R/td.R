@@ -28,15 +28,15 @@
 #' @param query Query string to send to Teradata.
 #' @param ... Optional connection settings.
 #'
-#' @return If no data is returned from query, then an \code{\link{invisible}} 
-#' object is returned. Otherwise, a \code{\link{data.frame}} object with all 
+#' @return If no data is returned from query, then an \code{\link{invisible}}
+#' object is returned. Otherwise, a \code{\link{data.frame}} object with all
 #' data queried will be returned.
 #'
-#' @seealso 
+#' @seealso
 #' \code{\link{tdConn}} for connection, \code{\link{tdDisk}} for disk usage,
-#' \code{\link{tdSpool}} for spool usage, \code{\link{tdCpu}} for CPU 
+#' \code{\link{tdSpool}} for spool usage, \code{\link{tdCpu}} for CPU
 #' usage, and \code{\link{tdJoin}} for joining tables.
-#' 
+#'
 #' @examples
 #' ## NOT RUN ##
 #' ## Runs a quick query based on connection profile
@@ -54,29 +54,35 @@ td = function(query="", ...) {
 
 	if (query=="") stop("No query statement given.")
 
-	## Connection ##
-	conn = tdCheckConn(list(...))
-
-	## Query ##
-	rs = try(DBI::dbGetQuery(conn, query), TRUE)
-
-	## Connection ##
-	if (attr(conn, "tmpConnection")) DBI::dbDisconnect(conn)
-
-	## Output ##
-	if(grepl("invalid value from generic function ", rs[1])) {
-		invisible(NULL)
-	} else if (!inherits(rs, "try-error")) {
-		return(rs)
+	tdCat = try(get(".tdCat", envir=.GlobalEnv), TRUE)
+	if (!inherits(tdCat, "try-error") & tdCat==TRUE) {
+		cat("\n", query, "\n")
 	} else {
-		err = attr(rs, "condition")
-		pos = regexpr('\\(\\[Teradata Database\\]|\\[Teradata', err)
-		rs = substring(err, pos)
-		if (nchar(query)>800) {
-			msg = rs
-		} else msg = paste(rs, "Query:\n", query, "\n")
-		stop(msg)
+		## Connection ##
+		conn = tdCheckConn(list(...))
+
+		## Query ##
+		rs = try(DBI::dbGetQuery(conn, query), TRUE)
+
+		## Connection ##
+		if (attr(conn, "tmpConnection")) DBI::dbDisconnect(conn)
+
+		## Output ##
+		if(grepl("invalid value from generic function ", rs[1])) {
+			invisible(NULL)
+		} else if (!inherits(rs, "try-error")) {
+			return(rs)
+		} else {
+			err = attr(rs, "condition")
+			pos = regexpr('\\(\\[Teradata Database\\]|\\[Teradata', err)
+			rs = substring(err, pos)
+			if (nchar(query)>800) {
+				msg = rs
+			} else msg = paste(rs, "Query:\n", query, "\n")
+			stop(msg)
+		}
+		invisible(rs)
 	}
-	invisible(rs)
-	
+
 }
+

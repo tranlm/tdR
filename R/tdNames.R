@@ -73,7 +73,7 @@ tdNames = function(table=NULL, ...) {
 	conn = tdCheckConn(list(...))
 	
 	## table ##
-	db = toupper(td("select database", conn=conn)[1,1])
+	db = toupper(td("select database;", conn=conn)[1,1])
 	table = do.call("rbind", lapply(table, function(x) {
 		if (length(x)==1) {
 			return(c(db,x))
@@ -93,7 +93,7 @@ tdNames = function(table=NULL, ...) {
 				ColumnType, 
 				ColumnLength
 			FROM DBC.COLUMNS
-			WHERE %s", st)
+			WHERE %s;", st)
 	tableInfo = td(query, conn=conn)
 	tableInfo$DatabaseName = gsub("[[:space:]]*$", "", tableInfo$DatabaseName)
 	tableInfo$TableName = gsub("[[:space:]]*$", "", tableInfo$TableName)
@@ -107,7 +107,7 @@ tdNames = function(table=NULL, ...) {
 	## Primary / secondary indices ##
 	tableInfo$Index = NA
 	for(i in 1:nrow(table)) {
-		tablehow = try(DBI::dbGetQuery(conn, sprintf("show table %s.%s", table[i,1], table[i,2]))[1,1], TRUE)
+		tablehow = try(td(sprintf("show table %s.%s;", table[i,1], table[i,2]), conn=conn)[1,1], TRUE)
 		if (!inherits(tablehow, "try-error")) {
 			tmp = substring(tablehow, regexpr("PRIMARY INDEX \\(", tablehow)+14)
 			m = gregexpr("\\([^)]*\\)", tmp)
