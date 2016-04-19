@@ -1,6 +1,6 @@
 # tdR R-package
 
-This is the current version of the tdR R package (version 0.9.\*).
+This is the current version of the tdR R package (version 1.1.\*).
 
 ## How to install from Gitlab ##
 

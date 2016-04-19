@@ -12,8 +12,8 @@ td(query = "", ...)
 \item{...}{Optional connection settings.}
 }
 \value{
-If no data is returned from query, then an \code{\link{invisible}} 
-object is returned. Otherwise, a \code{\link{data.frame}} object with all 
+If no data is returned from query, then an \code{\link{invisible}}
+object is returned. Otherwise, a \code{\link{data.frame}} object with all
 data queried will be returned.
 }
 \description{
@@ -50,7 +50,7 @@ terajdbc4.jar drivers.
 }
 \seealso{
 \code{\link{tdConn}} for connection, \code{\link{tdDisk}} for disk usage,
-\code{\link{tdSpool}} for spool usage, \code{\link{tdCpu}} for CPU 
+\code{\link{tdSpool}} for spool usage, \code{\link{tdCpu}} for CPU
 usage, and \code{\link{tdJoin}} for joining tables.
 }
 
