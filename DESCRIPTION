@@ -4,7 +4,7 @@ Version: 0.0.1.1000
 Author: Linh Tran
 Maintainer: Linh Tran <linh_m_tran@apple.com>
 Description: Helper functions for Teradata queries and other miscellaneous things.
-Depends: R (>= 3.2.2), RJDBC
+Depends: R (>= 3.0.2), RJDBC
 Imports: RJDBC, DBI
 License: MIT + file LICENSE
 LazyData: true
