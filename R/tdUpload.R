@@ -33,6 +33,7 @@
 #' @param data \code{link{data.frame}} containing data to upload. This must be in 
 #' the same column order as the Teradata table.
 #' @param where String statement to subset table with.
+#' @param batchSize Number of rows to upload simultaneously.
 #'  
 #' @param ... Optional connection settings.
 #'

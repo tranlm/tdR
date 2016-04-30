@@ -10,6 +10,8 @@ tdUpload(data = NULL, table = NULL, batchSize = 2500, ...)
 \item{data}{\code{link{data.frame}} containing data to upload. This must be in 
 the same column order as the Teradata table.}
 
+\item{batchSize}{Number of rows to upload simultaneously.}
+
 \item{...}{Optional connection settings.}
 
 \item{where}{String statement to subset table with.}
