@@ -29,11 +29,11 @@
 #' @return A \code{\link{data.frame}} object is returned with all of the Teradata
 #' query information of the specified date.
 #'
-#' @seealso 
+#' @seealso
 #' \code{\link{tdConn}} for connection, \code{\link{tdCpu}} for CPU usage,
-#' \code{\link{tdSpool}} for spool usage, and \code{\link{td}} for general 
+#' \code{\link{tdSpool}} for spool usage, and \code{\link{td}} for general
 #' queries
-#' 
+#'
 #' @examples
 #' ## NOT RUN ##
 #' ## Connect to default data warehouse and data base
@@ -71,7 +71,7 @@ tdDisk = function(user="user", ...) {
 	tableInfo = td(query, conn=conn)
 
 	## Connection ##
-	if (	attr(conn, "tmpConnection")) DBI::dbDisconnect(conn)
+	if (attr(conn, "tmpConnection")) DBI::dbDisconnect(conn)
 
 	return(tableInfo)
 }

@@ -4,17 +4,18 @@
 \alias{tdUpload}
 \title{tdUpload}
 \usage{
-tdUpload(data = NULL, table = NULL)
+tdUpload(data = NULL, table = NULL, batchSize = 2500, ...)
 }
 \arguments{
-\item{data}{\code{link{data.frame}} containing data to upload}
-
-\item{where}{String statement to subset table with.}
+\item{data}{\code{link{data.frame}} containing data to upload. This must be in 
+the same column order as the Teradata table.}
 
 \item{...}{Optional connection settings.}
+
+\item{where}{String statement to subset table with.}
 }
 \value{
-Returns a count of the number of rows uploaded.
+Returns an invisible objecting containing the count of the number of rows uploaded.
 }
 \description{
 Uploads data to Teradata tables. This code is specifically 
@@ -30,10 +31,14 @@ an attempt is made to connect to Teradata. Once the query is run, the
 connection is then closed. If a connection object (\code{conn}) is provided
 to the function (or one is found globally), then the connection remains
 open.
-
+}
+\details{
 By default, numeric vectors will be uploaded as an int, while character vectors 
 will be uploaded as a varchar with the longest character length. For now, if any
 other \code{class} is included, an error will be thrown.
+
+In order to keep the required Java memory down, data is uploaded in batches  
+at a time. This can be configured to be as many (or little observations) as desired.
 }
 \seealso{
 \code{\link{tdConn}} for connection, \code{\link{tdNames}} for table names,

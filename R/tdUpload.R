@@ -1,4 +1,4 @@
-# TODO: Function to grab Teradata table rows
+# TODO: Function to upload data to Teradata
 # 
 # Author: Linh Tran
 # Date: Mar 11, 2016
@@ -22,15 +22,21 @@
 #' to the function (or one is found globally), then the connection remains
 #' open.
 #'
+#' @details 
 #' By default, numeric vectors will be uploaded as an int, while character vectors 
 #' will be uploaded as a varchar with the longest character length. For now, if any
 #' other \code{class} is included, an error will be thrown.
 #' 
-#' @param data \code{link{data.frame}} containing data to upload 
-#' @param where String statement to subset table with. 
+#' In order to keep the required Java memory down, data is uploaded in batches  
+#' at a time. This can be configured to be as many (or little observations) as desired.
+#' 
+#' @param data \code{link{data.frame}} containing data to upload. This must be in 
+#' the same column order as the Teradata table.
+#' @param where String statement to subset table with.
+#'  
 #' @param ... Optional connection settings.
 #'
-#' @return Returns a count of the number of rows uploaded. 
+#' @return Returns an invisible objecting containing the count of the number of rows uploaded. 
 #' 
 #' @seealso 
 #' \code{\link{tdConn}} for connection, \code{\link{tdNames}} for table names,
@@ -39,52 +45,54 @@
 #' 
 #' 
 #' @export
-tdUpload = function(data=NULL, table=NULL) {
+tdUpload = function(data=NULL, table=NULL, batchSize=2500, ...) {
 
-	stop("Function not working yet.")
-#	supportedTypes = c("numeric", "character", "Date", "POSIXct", "POSIXt")
-#	tmp = unlist(lapply(sapply(data, class), function(x) return(x[1])))
-#	table = strsplit(toupper(table), "\\.")
-#	if (any(unlist(lapply(table, length))>2)) stop("Table names can only have up to 1 period.")
-#	
-#	if (any(!tmp %in% supportedTypes)) stop("Unsupported data type included.")
-#	
-#	## Connection ##
-#	conn = tdCheckConn(list(...))
-#	
-#	## table ##
-#	db = td("select database;", conn=conn)[1,1]
-#	table = do.call("rbind", lapply(table, function(x) {
-#		if (length(x)==1) {
-#			return(c(db,x))
-#		} else if (length(x)==2) {
-#			return(x)
-#		} else {
-#			stop("Problem with the table names.")
-#		}
-#	}))
-#	table = paste(table[1,1], table[1,2], sep=".")
-#
-#	## columns ##
-#	tmp2 
-#	
-#	if(!tdExists(table)) {
-#		td("create table 
-#	}
-#	
-#	ps = .jcall(conn@jc, "Ljava/sql/PreparedStatement;", "prepareStatement", sprintf("insert into %s values(%s)", table, paste(rep("?", ncol(data)), collapse=",")))
-#	for(i in 1:nrow(aniData)) {
-#		.jcall(ps,"V","setString", as.integer(1), aniData$ANI[i])
-#		.jcall(ps,"V","addBatch")
-#	}
-#loadResult = .jcall(ps,"[I","executeBatch")
-#cat(sum(loadResult), "records loaded successfully.\n")
-#.jcall(ps,"V","close")
-#
-#	
-#	## Connection ##
-#	if (	attr(conn, "tmpConnection")) DBI::dbDisconnect(conn)
-#	
-#	return(tmpRows)
+	supportedTypes = c("numeric", "character", "Date", "POSIXct", "POSIXt")
+	tmp = unlist(lapply(sapply(data, class), function(x) return(x[1])))
+	table = strsplit(toupper(table), "\\.")
+	if (any(unlist(lapply(table, length))>2)) stop("Table names can only have up to 1 period.")
+	
+	if (any(!tmp %in% supportedTypes)) stop("Unsupported data type included.")
+	
+	## Connection ##
+	conn = tdCheckConn(list(...))
+	
+	## table ##
+	db = td("select database;", conn=conn)[1,1]
+	table = do.call("rbind", lapply(table, function(x) {
+		if (length(x)==1) {
+			return(c(db,x))
+		} else if (length(x)==2) {
+			return(x)
+		} else {
+			stop("Problem with the table names.")
+		}
+	}))
+	table = paste(table[1,1], table[1,2], sep=".")
+	if(!tdExists(table)) stop("Table not found.")
+	
+	ps = .jcall(conn@jc, "Ljava/sql/PreparedStatement;", "prepareStatement", sprintf("insert into %s values(%s)", table, paste(rep("?", ncol(data)), collapse=",")))
+	for(i in 1:nrow(data)) {
+		for(j in 1:ncol(data)) {
+			if (class(data[[j]])=="numeric") {
+				.jcall(ps,"V", "setDouble", as.integer(j), data[i,j])			
+			} else {
+				.jcall(ps,"V", "setString", as.integer(j), as.character(data[i,j]))			
+			}
+		}
+		.jcall(ps,"V", "addBatch")
+		if (i %% batchSize == 0 | i==nrow(data)) {
+			loadResult = .jcall(ps,"[I","executeBatch")
+			message(sprintf("%d rows uploaded", sum(loadResult)))
+		}
+	}
+	.jcall(ps,"V","close")
+	rowsUploaded = tdRows(table)
+	
+	## Connection ##
+	if (	attr(conn, "tmpConnection")) DBI::dbDisconnect(conn)
+	
+	invisible(rowsUploaded)
+	
 }
 

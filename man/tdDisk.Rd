@@ -46,7 +46,7 @@ open.
 }
 \seealso{
 \code{\link{tdConn}} for connection, \code{\link{tdCpu}} for CPU usage,
-\code{\link{tdSpool}} for spool usage, and \code{\link{td}} for general 
+\code{\link{tdSpool}} for spool usage, and \code{\link{td}} for general
 queries
 }
 

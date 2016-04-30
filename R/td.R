@@ -25,6 +25,10 @@
 #' @details Uses the v15.10.00.33 release (12 Jan 2016) tdgssconfig.jar and
 #' terajdbc4.jar drivers.
 #'
+#' A hidden option allows the user to print the SQL code being generated directly
+#' to the console without submitting the query to Teradata. Simply specify
+#' \code{.tdCat=TRUE} in the global environment before running the code.
+#'
 #' @param query Query string to send to Teradata.
 #' @param ... Optional connection settings.
 #'
