@@ -54,11 +54,11 @@ tdDisk = function(user="user", ...) {
 
 	query = sprintf(
 			"select
-				trim(DATABASENAME),
-				trim(TABLENAME),
-				sum(CURRENTPERM)/(1024**3) ACTUALSPACE,
-				max(CURRENTPERM)*(hashamp()+1)/(1024**3) EFFECTIVESPACE,
-				(100 - (avg(CURRENTPERM)/max(CURRENTPERM)*100)) as SKEWFACTOR,
+				trim(a.DATABASENAME),
+				trim(a.TABLENAME),
+				sum(a.CURRENTPERM)/(1024**3) ACTUALSPACE,
+				max(a.CURRENTPERM)*(hashamp()+1)/(1024**3) EFFECTIVESPACE,
+				(100 - (avg(a.CURRENTPERM)/max(a.CURRENTPERM)*100)) as SKEWFACTOR,
 				hashamp() + 1 as NumAMPs
 				from DBC.TABLESIZE a
 				where exists
@@ -66,7 +66,8 @@ tdDisk = function(user="user", ...) {
 				where a.DATABASENAME = b.DATABASENAME
 				and a.TABLENAME = b.TABLENAME
 				and b.CREATORNAME = %s)
-				group by 1, 2;",
+				group by 1, 2
+				order by 1, 4 desc;",
 			user)
 	tableInfo = td(query, conn=conn)
 
@@ -75,5 +76,3 @@ tdDisk = function(user="user", ...) {
 
 	return(tableInfo)
 }
-
-
