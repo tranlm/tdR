@@ -31,7 +31,7 @@ to the function (or one is found globally), then the connection remains
 open.
 }
 \details{
-\emph{Warning:} This function rads in all lines and parses commands 
+\emph{Warning:} This function reads in all lines and parses commands 
 using "\code{;}". Thus, commands should be separated using that character. 
 If a literal ";" is desired within the code, an escape character of "\" 
 should precede it, e.g. \code{where column="\;"}.

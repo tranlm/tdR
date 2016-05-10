@@ -23,7 +23,7 @@
 #' open.
 #'
 #' @details
-#' \emph{Warning:} This function rads in all lines and parses commands 
+#' \emph{Warning:} This function reads in all lines and parses commands 
 #' using "\code{;}". Thus, commands should be separated using that character. 
 #' If a literal ";" is desired within the code, an escape character of "\" 
 #' should precede it, e.g. \code{where column="\;"}. 
@@ -64,18 +64,22 @@ tdFile = function(file=NULL, ...) {
 	
 	## Connection ##
 	conn = tdCheckConn(list(...))
+	tmpConnection = attr(conn, "tmpConnection")
+	attr(conn, "tmpConnection") = FALSE
 
 	## Queries ##
 	queries = paste(readLines(file), collapse=" ")
 	queries = strsplit(queries, "\\\\;(*SKIP)(*FAIL)|\\;", perl=TRUE)[[1]]
 	for (i in 1:length(queries)) {
-		cat(paste("Query:\n", queries[i], "\n"))
-		tmp = td(queries[i], conn=conn)
-		if(!is.null(tmp)) print(tmp)
+		if (gsub(" ", '', queries[i])!='') {
+			cat(paste("Query:\n", queries[i], "\n"))
+			tmp = td(queries[i], conn=conn)
+			if (!is.null(tmp)) print(tmp)			
+		}
 	}
 	
 	## Connection ##
-	if (	attr(conn, "tmpConnection")) DBI::dbDisconnect(conn)
+	if (tmpConnection) DBI::dbDisconnect(conn)
 
 	invisible(TRUE)
 }
