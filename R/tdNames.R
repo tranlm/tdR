@@ -86,10 +86,10 @@ tdNames = function(table=NULL, ...) {
 	
 	st = paste(paste0("upper(DatabaseName)='", table[,1], "' and upper(TABLENAME)='",table[,2], "'"), collapse=" or ")
 	query = sprintf("select
-				DatabaseName, 
-				TableName, 
-				ColumnName, 
-				ColumnFormat, 
+				trim(DatabaseName),
+				trim(TableName),
+				trim(ColumnName),
+				trim(ColumnFormat), 
 				ColumnType, 
 				ColumnLength
 			FROM DBC.COLUMNS
