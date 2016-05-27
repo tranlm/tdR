@@ -57,9 +57,10 @@
 #' @export
 tdSample = function(table=NULL, n=10, cols=NULL, where="", ...) {
 	
-	tmp = paste(substitute(list(table)))[-1]
+	tmp = try(eval(table), TRUE)
+	if (inherits("try-error", tmp)) tmp = paste(substitute(list(table)))[-1]
 	if (!exists(tmp)) table=tmp
-	if (is.null(table) | table=='') stop("No Teradata table specified.")
+	if (is.null(table) | all(table=='')) stop("No Teradata table specified.")
 	if (length(table)>1) stop("Only 1 Teradata table can be supplied.")
 	table = strsplit(toupper(table), "\\.")
 	if (any(unlist(lapply(table, length))>2)) stop("Table name can only have up to 1 period.")

@@ -63,7 +63,8 @@
 #' @export
 tdNames = function(table=NULL, ...) {
 	
-	tmp = paste(substitute(list(table)))[-1]
+	tmp = try(eval(table), TRUE)
+	if (inherits("try-error", tmp)) tmp = paste(substitute(list(table)))[-1]
 	if (!exists(tmp)) table=tmp
 	if (is.null(table) | all(table=='')) stop("No Teradata table specified.")
 	table = strsplit(toupper(table), "\\.")
@@ -85,51 +86,15 @@ tdNames = function(table=NULL, ...) {
 	}))
 	
 	st = paste(paste0("upper(DatabaseName)='", table[,1], "' and upper(TABLENAME)='",table[,2], "'"), collapse=" or ")
-	query = sprintf("select
-				trim(DatabaseName),
-				trim(TableName),
-				trim(ColumnName),
-				trim(ColumnFormat), 
-				ColumnType, 
-				ColumnLength
-			FROM DBC.COLUMNS
-			WHERE %s;", st)
+	query = sprintf("select trim(ColumnName) names FROM DBC.COLUMNS WHERE %s;", st)
 	tableInfo = td(query, conn=conn)
-	tableInfo$DatabaseName = gsub("[[:space:]]*$", "", tableInfo$DatabaseName)
-	tableInfo$TableName = gsub("[[:space:]]*$", "", tableInfo$TableName)
-	tableInfo$ColumnName = gsub("[[:space:]]*$", "", tableInfo$ColumnName)
-	tableInfo$ColumnFormat = gsub("[[:space:]]*$", "", tableInfo$ColumnFormat)
 	if (nrow(tableInfo)==0) stop(paste("No table details found for:", paste(paste(table[,1], table[,2], sep="."), collapse=", ")))
 	tableMissing = NULL	
 	for(i in 1:nrow(table)) if (!table[i,2] %in% toupper(tableInfo$TableName)) tableMissing = c(tableMissing, table[i,2])
 	if (!is.null(tableMissing)) warning(paste("The following table were not found:", paste(tableMissing, collapse=", ")))
 	
-	## Primary / secondary indices ##
-	tableInfo$Index = NA
-	for(i in 1:nrow(table)) {
-		tablehow = try(td(sprintf("show table %s.%s;", table[i,1], table[i,2]), conn=conn)[1,1], TRUE)
-		if (!inherits(tablehow, "try-error")) {
-			tmp = substring(tablehow, regexpr("PRIMARY INDEX \\(", tablehow)+14)
-			m = gregexpr("\\([^)]*\\)", tmp)
-			indicies = regmatches(tmp, m)[[1]]
-			indicies = lapply(indicies, function(x) {
-				tmp = unlist(strsplit(substr(x, 2, nchar(x)-1), "\\,"))
-				tmp = gsub("^*[[:space:]]|[[:space:]]*$", "", tmp)
-				return(tmp)
-				})
-			keys = lapply(indicies, function(x) unlist(strsplit(x, "\\,")))
-			prim.keys = gsub("^*[[:space:]]|[[:space:]]*$", "", keys[[1]])
-			if (length(keys)>1) {
-				sec.keys = gsub("^*[[:space:]]|[[:space:]]*$", "", keys[[2]])
-			} else sec.keys=NULL
-			idx = toupper(tableInfo$DatabaseName)==table[i,1] & toupper(tableInfo$TableName)==table[i,2]
-			tableInfo$Index[idx] = ifelse(tableInfo$ColumnName[idx] %in% prim.keys, 1, ifelse(tableInfo$ColumnName[idx] %in% sec.keys, 2, 0))
-		}
-	}
-	tableInfo = tableInfo[order(tableInfo$DatabaseName, tableInfo$TableName),]
-	
 	## Connection ##
 	if (	attr(conn, "tmpConnection")) DBI::dbDisconnect(conn)
 	
-	return(tableInfo)
+	return(tableInfo$names)
 }
