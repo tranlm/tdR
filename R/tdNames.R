@@ -64,7 +64,7 @@
 tdNames = function(table=NULL, ...) {
 	
 	tmp = try(eval(table), TRUE)
-	if (inherits("try-error", tmp)) tmp = paste(substitute(list(table)))[-1]
+	if (inherits(tmp, "try-error")) tmp = paste(substitute(list(table)))[-1]
 	if (!exists(tmp)) table=tmp
 	if (is.null(table) | all(table=='')) stop("No Teradata table specified.")
 	table = strsplit(toupper(table), "\\.")
@@ -89,9 +89,6 @@ tdNames = function(table=NULL, ...) {
 	query = sprintf("select trim(ColumnName) names FROM DBC.COLUMNS WHERE %s;", st)
 	tableInfo = td(query, conn=conn)
 	if (nrow(tableInfo)==0) stop(paste("No table details found for:", paste(paste(table[,1], table[,2], sep="."), collapse=", ")))
-	tableMissing = NULL	
-	for(i in 1:nrow(table)) if (!table[i,2] %in% toupper(tableInfo$TableName)) tableMissing = c(tableMissing, table[i,2])
-	if (!is.null(tableMissing)) warning(paste("The following table were not found:", paste(tableMissing, collapse=", ")))
 	
 	## Connection ##
 	if (	attr(conn, "tmpConnection")) DBI::dbDisconnect(conn)

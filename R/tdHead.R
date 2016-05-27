@@ -53,7 +53,7 @@
 tdHead = function(table=NULL, n=10, cols=NULL, where="", ...) {
 
 	tmp = try(eval(table), TRUE)
-	if (inherits("try-error", tmp)) tmp = paste(substitute(list(table)))[-1]
+	if (inherits(tmp, "try-error")) tmp = paste(substitute(list(table)))[-1]
 	if (!exists(tmp)) table=tmp
 	if (is.null(table) | all(table=='')) stop("No Teradata table specified.")
 	if (length(table)>1) stop("Only 1 Teradata table can be supplied.")

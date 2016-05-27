@@ -55,7 +55,7 @@
 tdShow = function(table=NULL, ...) {
 	
 	tmp = try(eval(table), TRUE)
-	if (inherits("try-error", tmp)) tmp = paste(substitute(list(table)))[-1]
+	if (inherits(tmp, "try-error")) tmp = paste(substitute(list(table)))[-1]
 	if (!exists(tmp)) table=tmp
 	if (is.null(table) | all(table=='')) stop("No Teradata table specified.")
 	table = strsplit(toupper(table), "\\.")
