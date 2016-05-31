@@ -1,6 +1,6 @@
 # tdR R-package
 
-This is the current version of the tdR R package (version 1.1.1\*).
+This is the current version of the tdR R package (version 1.1.1\*). Dependencies for this package include the DBI and RJDBC packages, which depend on rJava.
 
 ## How to install from Gitlab ##
 
