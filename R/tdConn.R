@@ -9,9 +9,7 @@
 #' @title tdConn
 #'
 #' @description Checks for a connection to the Teradata server. If none exists,
-#' tries to establish one. This code is specifically designed for connectivity
-#' to Teradata servers using OSX at Apple using JDBC drivers and should be updated if
-#' connected to other sources. If no JDBC connection is provided (\code{tdConn}),
+#' tries to establish one. If no JDBC connection is provided (\code{tdConn}),
 #' then a connection is attempted using the \code{user}, and \code{password} provided.
 #'
 #' @details If desired, you can define your username and password in the .Rprofile 

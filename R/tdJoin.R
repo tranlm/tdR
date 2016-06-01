@@ -11,9 +11,6 @@
 #' @description
 #' Takes two (or more) Teradata EDW tables using a JDBC connection
 #' object via the \code{RJDBC} package and merges them together.
-#' This code is specifically designed for connectivity to Teradata servers
-#' using OSX at Apple using JDBC drivers and should be updated if
-#' connected to other sources.
 #'
 #' @details
 #' By default, the code tries to do joins starting from Table 1 going up.

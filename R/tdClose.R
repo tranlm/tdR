@@ -9,9 +9,7 @@
 #' @title tdClose
 #'
 #' @description Closes connection to the Teradata server. If none exists,
-#' then does nothing. This code is specifically designed for connectivity
-#' to Teradata servers using OSX at Apple using JDBC drivers and should be updated if
-#' connected to other sources. 
+#' then does nothing. 
 #'
 #' Takes either a connection object provided, or looks for one globally.
 #' 
