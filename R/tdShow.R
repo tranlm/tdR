@@ -56,31 +56,20 @@ tdShow = function(table=NULL, ...) {
 	if (inherits(tmp, "try-error")) tmp = paste(substitute(list(table)))[-1]
 	if (!exists(tmp)) table=tmp
 	if (is.null(table) | all(table=='')) stop("No Teradata table specified.")
-	table = strsplit(toupper(table), "\\.")
-	if (any(unlist(lapply(table, length))>2)) stop("table name can only have up to 1 period.")
+	table = strsplit(toupper(table), "\\.")[[1]]
+	if (length(table)>2) stop("table name can only have up to 1 period.")
 	
 	## Connection ##
 	conn = tdCheckConn(list(...))
-	
-	## table ##
-	db = td("select database;", conn=conn)[1,1]
-	table = do.call("rbind", lapply(table, function(x) {
-		if (length(x)==1) {
-			return(c(db,x))
-		} else if (length(x)==2) {
-			return(x)
-		} else {
-			stop("Problem with the table names.")
-		}
-	}))
-	
-	showResults = rep('', nrow(table))
-	tmpTry = try(td(sprintf('show table %s.%s;', table[1,1], table[1,2]), conn=conn)[1,1], TRUE)
+
+	## Query ##
+	showResults = ''
+	tmpTry = try(td(sprintf('show table %s;', paste(table, collapse=".")), conn=conn)[1,1], TRUE)
 	if (inherits(tmpTry, 'try-error')) {
-		tmpTry = try(td(sprintf('show view from %s.%s;', table[1,1], table[1,2]), conn=conn)[1,1], TRUE)
+		tmpTry = try(td(sprintf('show view from %s;', paste(table, collapse=".")), conn=conn)[1,1], TRUE)
 	}
 	if (inherits(tmpTry, 'try-error')) {
-		tmpTry = try(td(sprintf('show select * from %s.%s;', table[1,1], table[1,2]), conn=conn)[1,1], TRUE)
+		tmpTry = try(td(sprintf('show select * from %s;', paste(table, collapse=".")), conn=conn)[1,1], TRUE)
 	}
 	if (!inherits(tmpTry, 'try-error')) {
 		showResults[1] = tmpTry

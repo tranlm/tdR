@@ -65,27 +65,15 @@ tdNames = function(table=NULL, ...) {
 	if (inherits(tmp, "try-error")) tmp = paste(substitute(list(table)))[-1]
 	if (!exists(tmp)) table=tmp
 	if (is.null(table) | all(table=='')) stop("No Teradata table specified.")
-	table = strsplit(toupper(table), "\\.")
-	if (any(unlist(lapply(table, length))>2)) stop("table name can only have up to 1 period.")
+	table = strsplit(toupper(table), "\\.")[[1]]
+	if (length(table)>2) stop("table name can only have up to 1 period.")
 			
 	## Connection ##
 	conn = tdCheckConn(list(...))
-	
-	## table ##
-	db = toupper(td("select database;", conn=conn)[1,1])
-	table = do.call("rbind", lapply(table, function(x) {
-		if (length(x)==1) {
-			return(c(db,x))
-		} else if (length(x)==2) {
-			return(x)
-		} else {
-			stop("Problem with the table names.")
-		}
-	}))
-	
-	st = paste(paste0("upper(DatabaseName)='", table[,1], "' and upper(TABLENAME)='",table[,2], "'"), collapse=" or ")
-	query = sprintf("select trim(ColumnName) names FROM DBC.COLUMNS WHERE %s;", st)
-	tableInfo = td(query, conn=conn)
+
+	## Query ##
+	qry = paste("where", ifelse(length(table)==1, sprintf("upper(TableName)='%s'", table[1]), ifelse(length(table)==2, sprintf("upper(DatabaseName)='%s' AND upper(TableName)='%s'", table[1], table[2]), "")))
+	tableInfo = td(sprintf("select trim(ColumnName) names FROM DBC.COLUMNS %s;", qry), conn=conn)
 	if (nrow(tableInfo)==0) stop(paste("No table details found for:", paste(paste(table[,1], table[,2], sep="."), collapse=", ")))
 	
 	## Connection ##

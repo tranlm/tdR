@@ -50,31 +50,19 @@ tdDim = function(table=NULL, where="", ...) {
 	if (inherits(tmp, "try-error")) tmp = paste(substitute(list(table)))[-1]
 	if (!exists(tmp)) table=tmp
 	if (is.null(table) | all(table=='')) stop("No Teradata table specified.")
-	table = strsplit(toupper(table), "\\.")
+	table = strsplit(toupper(table), "\\.")[[1]]
 	if (any(unlist(lapply(table, length))>2)) stop("Table names can only have up to 1 period.")
 	
 	## Connection ##
 	conn = tdCheckConn(list(...))
 	
-	## table ##
-	db = td("select database;", conn=conn)[1,1]
-	table = do.call("rbind", lapply(table, function(x) {
-		if (length(x)==1) {
-			return(c(db,x))
-		} else if (length(x)==2) {
-			return(x)
-		} else {
-			stop("Problem with the table names.")
-		}
-	}))
-
-	## Subset ##
+	## Query ##
 	if (where!="") where = paste("where", where)
-	
-	tableDim = td(sprintf("SELECT count(columnname) as ncol FROM DBC.Columns WHERE upper(DatabaseName)='%s' AND upper(TableName)='%s';", table[1,1], table[1,2]), conn=conn)
-	if (nrow(tableDim)==0) tableDim = data.frame(ncol=NA)
-	tmpRows = try(td(sprintf("select cast(count(*) as dec(18,0)) from %s.%s %s;", table[1,1], table[1,2], where), conn=conn)[1,1], TRUE)
-	tableDim$nrow = ifelse(inherits(tmpRows, 'try-error'), NA, tmpRows)
+	tableDim = try(td(sprintf("select cast(count(*) as bigint) nrow from %s %s;", paste(table, collapse="."), where), conn=conn), TRUE)
+	if (inherits(tableDim, "try-error")) tableDim = data.frame(nrow=NA)
+	qry = paste("where", ifelse(length(table)==1, sprintf("upper(TableName)='%s'", table[1]), ifelse(length(table)==2, sprintf("upper(DatabaseName)='%s' AND upper(TableName)='%s'", table[1], table[2]), "")))
+	tmpCol = td(sprintf("SELECT count(columnname) as ncol FROM DBC.Columns %s;", qry), conn=conn)
+	tableDim$ncol = tmpCol$ncol
 	
 	## Connection ##
 	if (	attr(conn, "tmpConnection")) DBI::dbDisconnect(conn)

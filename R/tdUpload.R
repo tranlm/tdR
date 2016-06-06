@@ -48,26 +48,16 @@ tdUpload = function(data=NULL, table=NULL, batchSize=2500, ...) {
 
 	supportedTypes = c("numeric", "character", "Date", "POSIXct", "POSIXt")
 	tmp = unlist(lapply(sapply(data, class), function(x) return(x[1])))
-	table = strsplit(toupper(table), "\\.")
-	if (any(unlist(lapply(table, length))>2)) stop("Table names can only have up to 1 period.")
+	table = strsplit(toupper(table), "\\.")[[1]]
+	if (length(table)>2) stop("Table names can only have up to 1 period.")
 	
 	if (any(!tmp %in% supportedTypes)) stop("Unsupported data type included.")
 	
 	## Connection ##
 	conn = tdCheckConn(list(...))
-	
-	## table ##
-	db = td("select database;", conn=conn)[1,1]
-	table = do.call("rbind", lapply(table, function(x) {
-		if (length(x)==1) {
-			return(c(db,x))
-		} else if (length(x)==2) {
-			return(x)
-		} else {
-			stop("Problem with the table names.")
-		}
-	}))
-	table = paste(table[1,1], table[1,2], sep=".")
+
+	## Query ##
+	table = paste(table, sep=".")
 	if(!tdExists(table)) stop("Table not found.")
 	
 	ps = .jcall(conn@jc, "Ljava/sql/PreparedStatement;", "prepareStatement", sprintf("insert into %s values(%s)", table, paste(rep("?", ncol(data)), collapse=",")))

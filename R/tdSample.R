@@ -60,24 +60,12 @@ tdSample = function(table=NULL, n=10, cols=NULL, where="", ...) {
 	if (!exists(tmp)) table=tmp
 	if (is.null(table) | all(table=='')) stop("No Teradata table specified.")
 	if (length(table)>1) stop("Only 1 Teradata table can be supplied.")
-	table = strsplit(toupper(table), "\\.")
-	if (any(unlist(lapply(table, length))>2)) stop("Table name can only have up to 1 period.")
+	table = strsplit(toupper(table), "\\.")[[1]]
+	if (length(table)>2) stop("Table name can only have up to 1 period.")
 	
 	## Connection ##
 	conn = tdCheckConn(list(...))
 	
-	## Tables ##
-	db = td("select database;", conn=conn)[1,1]
-	table = do.call("rbind", lapply(table, function(x) {
-		if (length(x)==1) {
-			return(c(db,x))
-		} else if (length(x)==2) {
-			return(x)
-		} else {
-			stop("Problem with the table names.")
-		}
-	}))
-
 	## Columns ##
 	if (is.null(cols)) cols = "*"
 	cols = paste(cols, collapse=", ")
@@ -86,7 +74,7 @@ tdSample = function(table=NULL, n=10, cols=NULL, where="", ...) {
 	if (where!="") where = paste("where", where)
 
 	## Observations ##
-	tabObs = td(sprintf('select %s from %s.%s %s sample %d;', cols, table[1,1], table[1,2], where, n), conn=conn)
+	tabObs = td(sprintf('select %s from %s %s sample %d;', cols, paste(table, collapse="."), where, n), conn=conn)
 	
 	## Connection ##
 	if (	attr(conn, "tmpConnection")) DBI::dbDisconnect(conn)

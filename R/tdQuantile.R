@@ -64,8 +64,8 @@ tdQuantile = function(table=NULL, probs=0.5, cols=NULL, where="", ...) {
 	if (!exists(tmp)) table=tmp
 	if (is.null(table) | all(table=='')) stop("No Teradata table specified.")
 	if (length(table)>1) stop("Only 1 Teradata table can be supplied.")
-	table = strsplit(toupper(table), "\\.")
-	if (any(unlist(lapply(table, length))>2)) stop("Table name can only have up to 1 period.")
+	table = strsplit(toupper(table), "\\.")[[1]]
+	if (length(table)>2) stop("Table name can only have up to 1 period.")
 	if (!all(is.numeric(probs))) stop("Quantiles are not numeric.")
 	if (!all(probs>=0 & probs<=1)) stop("Quantiles need to be in the range [0,1].")
 
@@ -73,18 +73,7 @@ tdQuantile = function(table=NULL, probs=0.5, cols=NULL, where="", ...) {
 	conn = tdCheckConn(list(...))
 
 	## Tables ##
-	user = td("select user;", conn=conn)[1,1]
-	db = td("select database;", conn=conn)[1,1]
-	table = do.call("rbind", lapply(table, function(x) {
-		if (length(x)==1) {
-			return(c(db,x))
-		} else if (length(x)==2) {
-			return(x)
-		} else {
-			stop("Problem with the table names.")
-		}
-	}))
-	table = paste(table[1,1], table[1,2], sep=".")
+	table = paste(table, collapse=".")
 
 	## Columns ##
 	if (is.null(cols)) {
@@ -102,7 +91,7 @@ tdQuantile = function(table=NULL, probs=0.5, cols=NULL, where="", ...) {
 		} else {
 			tmpWhere = paste("where", cols[i], "is not null")
 		}
-		nrows = td(sprintf('select count(*) from %s %s', table, tmpWhere))[1,1]
+		nrows = td(sprintf('select cast(count(*) as bigint) from %s %s', table, tmpWhere))[1,1]
 		if (nrows>0) {
 			Finverse = ceiling((nrows-1)*probs + 1)
 			tmpQuantiles = td(sprintf('sel (row_number() over (order by %s) - 1) as percentile, %s from %s %s qualify percentile in (%s);', cols[i], cols[i], table, tmpWhere, paste(Finverse, collapse=", ")), conn=conn)

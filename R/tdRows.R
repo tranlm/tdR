@@ -50,28 +50,16 @@ tdRows = function(table=NULL, where="", ...) {
 	if (inherits(tmp, "try-error")) tmp = paste(substitute(list(table)))[-1]
 	if (!exists(tmp)) table=tmp
 	if (is.null(table) | all(table=='')) stop("No Teradata table specified.")
-	table = strsplit(toupper(table), "\\.")
-	if (any(unlist(lapply(table, length))>2)) stop("Table names can only have up to 1 period.")
+	table = strsplit(toupper(table), "\\.")[[1]]
+	if (length(table)>2) stop("Table names can only have up to 1 period.")
 	
 	## Connection ##
 	conn = tdCheckConn(list(...))
 	
-	## table ##
-	db = td("select database;", conn=conn)[1,1]
-	table = do.call("rbind", lapply(table, function(x) {
-		if (length(x)==1) {
-			return(c(db,x))
-		} else if (length(x)==2) {
-			return(x)
-		} else {
-			stop("Problem with the table names.")
-		}
-	}))
-
 	## Subset ##
 	if (where!="") where = paste("where", where)
 	
-	tmpRows = td(sprintf("select cast(count(*) as bigint) from %s.%s %s;", table[1,1], table[1,2], where), conn=conn)[1,1]
+	tmpRows = td(sprintf("select cast(count(*) as bigint) from %s %s;", paste(table, collapse="."), where), conn=conn)[1,1]
 	
 	## Connection ##
 	if (	attr(conn, "tmpConnection")) DBI::dbDisconnect(conn)
