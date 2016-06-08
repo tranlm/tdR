@@ -71,7 +71,7 @@ td = function(query="", ...) {
 
 		## Output ##
 		if(grepl("invalid value from generic function ", rs[1])) {
-			invisible(NULL)
+			rs = NULL
 		} else if (!inherits(rs, "try-error")) {
 			return(rs)
 		} else {

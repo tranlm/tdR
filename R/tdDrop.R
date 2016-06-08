@@ -66,7 +66,7 @@ tdDrop = function(tables="", ...) {
 	## Tables ##
 	removed = NULL
 	for(i in 1:length(tables)) {
-		res = try(td(sprintf('drop table %s;', tables[[i]]), conn=conn), TRUE)
+		res = try(td(sprintf("drop table %s;", tables[[i]]), conn=conn), TRUE)
 		if (!inherits(res, "try-error")) removed = c(removed, tables[[i]])
 		rm(res)
 	}
