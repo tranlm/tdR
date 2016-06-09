@@ -40,6 +40,11 @@ library(tdR)
 ## nb. Do not change the name if you want subsequent code to discover the connection automatically
 conn = tdConn()
 
+## UPLOADING DATA ##
+data = data.frame(id=1, variable="test")
+td("create table TESTING (ID integer, VARIABLE char(4));")
+tdUpload(data, 'TESTING')
+
 ## ORGANIZE DATA ##
 td("create table xxxx as (...)")
 
