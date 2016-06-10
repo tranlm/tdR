@@ -47,6 +47,9 @@
 #' @export
 tdDrop = function(tables="", ...) {
 	
+	tmp = try(eval(tables), TRUE)
+	if (inherits(tmp, "try-error")) tmp = paste(substitute(list(tables)))[-1]
+	if (!any(sapply(tmp, exists))) tables=tmp
 	if (is.null(tables) | all(tables=='')) stop("No Teradata table specified.")
 	tables = strsplit(toupper(tables), "\\.")
 	if (any(unlist(lapply(tables, length))>2)) stop("Table names can only have up to 1 period.")

@@ -83,8 +83,8 @@ td = function(query="", ...) {
 			} else msg = paste(rs, "Query:\n", query, "\n")
 			stop(msg)
 		}
-		invisible(rs)
 	}
+	invisible(rs)
 
 }
 
