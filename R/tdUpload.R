@@ -32,7 +32,7 @@
 #' the same column order as the Teradata table.
 #' @param where String statement to subset table with.
 #' @param batchSize Number of rows to upload simultaneously.
-#'  
+#' @param verbose logical. If \code{TRUE}, then print message after each batch is uploaded.
 #' @param ... Optional connection settings.
 #'
 #' @return Returns an invisible objecting containing the count of the number of rows uploaded. 
@@ -44,7 +44,7 @@
 #' 
 #' 
 #' @export
-tdUpload = function(data=NULL, table=NULL, batchSize=2500, ...) {
+tdUpload = function(data=NULL, table=NULL, batchSize=2500, verbose=TRUE, ...) {
 
 	supportedTypes = c("numeric", "character", "Date", "POSIXct", "POSIXt")
 	tmp = unlist(lapply(sapply(data, class), function(x) return(x[1])))
@@ -72,7 +72,7 @@ tdUpload = function(data=NULL, table=NULL, batchSize=2500, ...) {
 		.jcall(ps,"V", "addBatch")
 		if (i %% batchSize == 0 | i==nrow(data)) {
 			loadResult = .jcall(ps,"[I","executeBatch")
-			message(sprintf("%d rows uploaded", sum(loadResult)))
+			if(verbose) message(sprintf("%d rows uploaded", sum(loadResult)))
 		}
 	}
 	.jcall(ps,"V","close")

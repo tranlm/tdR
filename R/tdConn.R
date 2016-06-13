@@ -25,7 +25,7 @@
 #' @param password Connection password.
 #' @param addr String containing address of database to connect to. By default, is
 #' \emph{jdbc:teradata://megadew.corp.apple.com/charset=utf8}.
-#' @param db Name of database to connect to. By default, is \emph{CDM_Special}.
+#' @param db Name of database to connect to. 
 #' @param classPath The location of the JDBC drivers. By default, will use the drivers included
 #' in the package.
 #' @param conn \code{DBIConnection} object with established connection to the RDMBS.
@@ -50,7 +50,7 @@
 #' # conn = tdConn(<username>, <password>, addr="jdbc:teradata://redwood.corp.apple.com")
 #'
 #' @export
-tdConn = function(username=getOption("tdPassword"), password=NULL, addr="jdbc:teradata://megadew.corp.apple.com/charset=utf8", db=ifelse(addr=="jdbc:teradata://megadew.corp.apple.com/charset=utf8", "CDM_Special", ""), classPath=NULL, conn=NULL) {
+tdConn = function(username=getOption("tdPassword"), password=NULL, addr="jdbc:teradata://megadew.corp.apple.com/charset=utf8", db="", classPath=NULL, conn=NULL) {
 
 	## CHECKS ##
 	if(!is.null(username) && is.null(password) && length(names(username)) > 0) {
