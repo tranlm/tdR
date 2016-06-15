@@ -59,6 +59,7 @@ td = function(query="", ...) {
 	tdCat = try(get(".tdCat", envir=.GlobalEnv), TRUE)
 	if (!inherits(tdCat, "try-error") & tdCat==TRUE) {
 		cat("\n", query, "\n")
+		rs = NULL
 	} else {
 		## Connection ##
 		conn = tdCheckConn(list(...))
