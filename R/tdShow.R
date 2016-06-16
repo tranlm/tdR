@@ -72,7 +72,7 @@ tdShow = function(table=NULL, ...) {
 	if (inherits(tmpTry, 'try-error')) {
 		tmpTry = try(td(sprintf('show select * from %s;', paste(table, collapse=".")), conn=conn)[1,1], TRUE)
 	}
-	if (!inherits(tmpTry, 'try-error') & !inherits(tdCat, "try-error") & tdCat==TRUE) {
+	if (!inherits(tmpTry, 'try-error') & !(!inherits(tdCat, "try-error") & tdCat==TRUE)) {
 		showResults[1] = tmpTry
 	}
 	showResults = paste(gsub("\\r", "\\\n", showResults), "\n")
