@@ -24,9 +24,7 @@ Returns a \code{\link{data.frame}} object with the following items:
 }
 }
 \description{
-Gets column names from Teradata tables. This code is specifically 
-designed for connectivity to Teradata servers using OSX at Apple using JDBC 
-drivers and should be updated if connected to other sources. Can take a JDBC 
+Gets column names from Teradata tables. Can take a JDBC 
 connection object (\code{conn}) if provided. If no JDBC connection is provided, 
 then a connection is attempted using the \code{user}, and \code{password} 
 provided. If none is provided, then tries to locate a connection object 

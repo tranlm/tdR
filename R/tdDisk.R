@@ -58,9 +58,9 @@ tdDisk = function(user="user", ...) {
 				max(a.CURRENTPERM)*(hashamp()+1)/(1024**3) EFFECTIVESPACE,
 				(100 - (avg(a.CURRENTPERM)/max(a.CURRENTPERM)*100)) as SKEWFACTOR,
 				hashamp() + 1 as NumAMPs
-				from DBC.TABLESIZE a
+				from DBC.TABLESIZEv a
 				where exists
-				(select 1 from DBC.TABLES b
+				(select 1 from DBC.TABLESv b
 				where a.DATABASENAME = b.DATABASENAME
 				and a.TABLENAME = b.TABLENAME
 				and b.CREATORNAME = %s)

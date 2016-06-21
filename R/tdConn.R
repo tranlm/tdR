@@ -12,20 +12,20 @@
 #' tries to establish one. If no JDBC connection is provided (\code{tdConn}),
 #' then a connection is attempted using the \code{user}, and \code{password} provided.
 #'
-#' @details If desired, you can define your username and password in the .Rprofile 
-#' file using the command \code{options(tdPassword = c(<username>="<password>"))}, which 
-#' will then automatically assign the password in the background each time R is started. 
-#' This then allows you to connect without having to enter your username and password 
+#' @details If desired, you can define your username and password in the .Rprofile
+#' file using the command \code{options(tdPassword = c(<username>="<password>"))}, which
+#' will then automatically assign the password in the background each time R is started.
+#' This then allows you to connect without having to enter your username and password
 #' manually each time you connect.
-#' 
-#' The JDBC driver included uses the v15.10.00.33 release (12 Jan 2016) 
+#'
+#' The JDBC driver included uses the v15.10.00.33 release (12 Jan 2016)
 #' tdgssconfig.jar and terajdbc4.jar drivers.
 #'
 #' @param username Connection user name.
 #' @param password Connection password.
 #' @param addr String containing address of database to connect to. By default, is
 #' \emph{jdbc:teradata://megadew.corp.apple.com/charset=utf8}.
-#' @param db Name of database to connect to. 
+#' @param db Name of database to connect to.
 #' @param classPath The location of the JDBC drivers. By default, will use the drivers included
 #' in the package.
 #' @param conn \code{DBIConnection} object with established connection to the RDMBS.
@@ -33,11 +33,11 @@
 #'
 #' @return A \code{RJDBC} connection object is returned.
 #'
-#' @seealso 
+#' @seealso
 #' \code{\link{td}} for Teradata queries, \code{\link{tdDisk}} for disk usage,
-#' \code{\link{tdSpool}} for spool usage, \code{\link{tdCpu}} for CPU 
+#' \code{\link{tdSpool}} for spool usage, \code{\link{tdCpu}} for CPU
 #' usage, and \code{\link{tdJoin}} for joining tables.
-#' 
+#'
 #' @examples
 #' ## NOT RUN ##
 #' ## Connect to default data warehouse and data base
@@ -50,7 +50,7 @@
 #' # conn = tdConn(<username>, <password>, addr="jdbc:teradata://redwood.corp.apple.com")
 #'
 #' @export
-tdConn = function(username=getOption("tdPassword"), password=NULL, addr="jdbc:teradata://megadew.corp.apple.com/charset=utf8", db="", classPath=NULL, conn=NULL) {
+tdConn = function(username=getOption("tdPassword"), password=NULL, addr=getOption("tdAddr"), db="", classPath=NULL, conn=NULL) {
 
 	## CHECKS ##
 	if(!is.null(username) && is.null(password) && length(names(username)) > 0) {

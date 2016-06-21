@@ -1,6 +1,6 @@
 # tdR R-package
 
-This is the current version of the tdR R package (version 0.4.11\*). Dependencies for this package include the DBI and RJDBC packages, which depend on rJava.
+This is the current version of the tdR R package (version 0.4.2\*). Dependencies for this package include the DBI and RJDBC packages, which depend on rJava.
 
 ## How to install from Gitlab ##
 
@@ -45,15 +45,18 @@ library(tdR)
 conn = tdConn()
 
 ## UPLOADING DATA ##
-data = data.frame(id=1, variable="test")
-td("create table TESTING (ID integer, VARIABLE char(4));")
-tdUpload(data, 'TESTING')
+data(mtcars)
+XX_data = cbind(mtcars, car=rownames(mtcars)) 
+tdCreate(XX_data)
+
+## UPLOADING ADDITIONAL DATA ##
+tdUpload(XX_data, 'XX_data')
 
 ## ORGANIZE DATA ##
 td("create table xxxx as (...)")
 
 ## DEBUGGING ##
-tdDim("xxxx")
+tdRows("xxxx")
 tdNames("xxxx")
 tdHead("xxxx")
 tdShow("xxxx")

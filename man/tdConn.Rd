@@ -5,9 +5,7 @@
 \title{tdConn}
 \usage{
 tdConn(username = getOption("tdPassword"), password = NULL,
-  addr = "jdbc:teradata://megadew.corp.apple.com/charset=utf8",
-  db = ifelse(addr == "jdbc:teradata://megadew.corp.apple.com/charset=utf8",
-  "CDM_Special", ""), classPath = NULL, conn = NULL)
+  addr = getOption("tdAddr"), db = "", classPath = NULL, conn = NULL)
 }
 \arguments{
 \item{username}{Connection user name.}
@@ -17,7 +15,7 @@ tdConn(username = getOption("tdPassword"), password = NULL,
 \item{addr}{String containing address of database to connect to. By default, is
 \emph{jdbc:teradata://megadew.corp.apple.com/charset=utf8}.}
 
-\item{db}{Name of database to connect to. By default, is \emph{CDM_Special}.}
+\item{db}{Name of database to connect to.}
 
 \item{classPath}{The location of the JDBC drivers. By default, will use the drivers included
 in the package.}
@@ -30,19 +28,17 @@ A \code{RJDBC} connection object is returned.
 }
 \description{
 Checks for a connection to the Teradata server. If none exists,
-tries to establish one. This code is specifically designed for connectivity
-to Teradata servers using OSX at Apple using JDBC drivers and should be updated if
-connected to other sources. If no JDBC connection is provided (\code{tdConn}),
+tries to establish one. If no JDBC connection is provided (\code{tdConn}),
 then a connection is attempted using the \code{user}, and \code{password} provided.
 }
 \details{
-If desired, you can define your username and password in the .Rprofile 
-file using the command \code{options(tdPassword = c(<username>="<password>"))}, which 
-will then automatically assign the password in the background each time R is started. 
-This then allows you to connect without having to enter your username and password 
+If desired, you can define your username and password in the .Rprofile
+file using the command \code{options(tdPassword = c(<username>="<password>"))}, which
+will then automatically assign the password in the background each time R is started.
+This then allows you to connect without having to enter your username and password
 manually each time you connect.
 
-The JDBC driver included uses the v15.10.00.33 release (12 Jan 2016) 
+The JDBC driver included uses the v15.10.00.33 release (12 Jan 2016)
 tdgssconfig.jar and terajdbc4.jar drivers.
 }
 \examples{
@@ -59,7 +55,7 @@ tdgssconfig.jar and terajdbc4.jar drivers.
 }
 \seealso{
 \code{\link{td}} for Teradata queries, \code{\link{tdDisk}} for disk usage,
-\code{\link{tdSpool}} for spool usage, \code{\link{tdCpu}} for CPU 
+\code{\link{tdSpool}} for spool usage, \code{\link{tdCpu}} for CPU
 usage, and \code{\link{tdJoin}} for joining tables.
 }
 

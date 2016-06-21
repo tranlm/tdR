@@ -4,28 +4,29 @@
 \alias{tdUpload}
 \title{tdUpload}
 \usage{
-tdUpload(data = NULL, table = NULL, batchSize = 2500, ...)
+tdUpload(data = NULL, table = NULL, batchSize = 2500, verbose = TRUE,
+  ...)
 }
 \arguments{
-\item{data}{\code{link{data.frame}} containing data to upload. This must be in 
+\item{data}{\code{link{data.frame}} containing data to upload. This must be in
 the same column order as the Teradata table.}
+
+\item{table}{Name of the Teradata table to upload data to.}
 
 \item{batchSize}{Number of rows to upload simultaneously.}
 
-\item{...}{Optional connection settings.}
+\item{verbose}{logical. If \code{TRUE}, then print message after each batch is uploaded.}
 
-\item{where}{String statement to subset table with.}
+\item{...}{Optional connection settings.}
 }
 \value{
 Returns an invisible objecting containing the count of the number of rows uploaded.
 }
 \description{
-Uploads data to Teradata tables. This code is specifically 
-designed for connectivity to Teradata servers using OSX at Apple using JDBC 
-drivers and should be updated if connected to other sources. Can take a JDBC 
-connection object (\code{conn}) if provided. If no JDBC connection is provided, 
-then a connection is attempted using the \code{user}, and \code{password} 
-provided. If none is provided, then tries to locate a connection object 
+Uploads data to Teradata tables. Can take a JDBC
+connection object (\code{conn}) if provided. If no JDBC connection is provided,
+then a connection is attempted using the \code{user}, and \code{password}
+provided. If none is provided, then tries to locate a connection object
 (\code{conn}) in the global environment.
 
 If a connection profile (e.g. username, password, etc.) is provided, then
@@ -35,16 +36,16 @@ to the function (or one is found globally), then the connection remains
 open.
 }
 \details{
-By default, numeric vectors will be uploaded as an int, while character vectors 
+By default, numeric vectors will be uploaded as an int, while character vectors
 will be uploaded as a varchar with the longest character length. For now, if any
 other \code{class} is included, an error will be thrown.
 
-In order to keep the required Java memory down, data is uploaded in batches  
+In order to keep the required Java memory down, data is uploaded in batches
 at a time. This can be configured to be as many (or little observations) as desired.
 }
 \seealso{
 \code{\link{tdConn}} for connection, \code{\link{tdNames}} for table names,
-\code{\link{td}} for general queries, \code{\link{tdCpu}} for CPU 
+\code{\link{td}} for general queries, \code{\link{tdCpu}} for CPU
 usage, and \code{\link{tdJoin}} for joining tables.
 }
 

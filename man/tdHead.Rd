@@ -22,12 +22,10 @@ Returns a \code{\link{data.frame}} of the the Teradata table with the first
 \code{n} observations.
 }
 \description{
-Gets the top observations in a Teradata table. This code is specifically 
-designed for connectivity to Teradata servers using OSX at Apple using JDBC 
-drivers and should be updated if connected to other sources. Can take a JDBC 
-connection object (\code{conn}) if provided. If no JDBC connection is provided, 
-then a connection is attempted using the \code{user}, and \code{password} 
-provided. If none is provided, then tries to locate a connection object 
+Gets the top observations in a Teradata table. Can take a JDBC
+connection object (\code{conn}) if provided. If no JDBC connection is provided,
+then a connection is attempted using the \code{user}, and \code{password}
+provided. If none is provided, then tries to locate a connection object
 (\code{conn}) in the global environment.
 
 If a connection profile (e.g. username, password, etc.) is provided, then
@@ -41,18 +39,18 @@ open.
 ## Runs a quick query based on connection profile
 # tdHead("ICDB_PERSON", username=<username>, password=<password>, db="GCA")
 
-## Runs query using a separately established connection. Selects 20 observations 
-# from only two columns, subset by even Person_Id. 
+## Runs query using a separately established connection. Selects 20 observations
+# from only two columns, subset by even Person_Id.
 # conn = tdConn(<username>, <password>, db="GCA")
 # tdHead("ICDB_PERSON", 20, c("PERSON_ID", "INDIV_ID"), "PERSON_ID mod 2 = 0", conn=conn)
 
-## Uses same connection, but allows code to find globally. Also subsets on PERSON_ID. 
+## Uses same connection, but allows code to find globally. Also subsets on PERSON_ID.
 # tdHead("ICDB_PERSON")
 
 }
 \seealso{
 \code{\link{tdConn}} for connection, \code{\link{tdNames}} for table names,
-\code{\link{td}} for general queries, \code{\link{tdCpu}} for CPU 
+\code{\link{td}} for general queries, \code{\link{tdCpu}} for CPU
 usage, and \code{\link{tdJoin}} for joining tables.
 }
 

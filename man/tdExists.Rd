@@ -16,9 +16,7 @@ Returns a boolean indicator of either \code{TRUE} if table exists or
 \code{FALSE} if table does not.
 }
 \description{
-Determines if Teradata table exists. This code is specifically 
-designed for connectivity to Teradata servers using OSX at Apple using JDBC 
-drivers and should be updated if connected to other sources. Can take a JDBC 
+Determines if Teradata table exists. Can take a JDBC 
 connection object (\code{conn}) if provided. If no JDBC connection is provided, 
 then a connection is attempted using the \code{user}, and \code{password} 
 provided. If none is provided, then tries to locate a connection object 
