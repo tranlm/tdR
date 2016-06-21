@@ -21,10 +21,13 @@
 #' The JDBC driver included uses the v15.10.00.33 release (12 Jan 2016)
 #' tdgssconfig.jar and terajdbc4.jar drivers.
 #'
-#' @param username Connection user name.
-#' @param password Connection password.
-#' @param addr String containing address of database to connect to. By default, is
-#' \emph{jdbc:teradata://megadew.corp.apple.com/charset=utf8}.
+#' @param username Connection user name. By default, will try to search for a global
+#' environment variable called \code{tdPassword}. If found, will use those credentials.
+#' @param password Connection password. By default, will try to search for a global 
+#' environment variable called \code{tdPassword}. If found, will use those credentials.
+#' @param addr String containing address of database to connect to. By default, will 
+#' try to search for a global environment variable called \code{tdAddr}. If found, will
+#' use those credentials.
 #' @param db Name of database to connect to.
 #' @param classPath The location of the JDBC drivers. By default, will use the drivers included
 #' in the package.
@@ -41,13 +44,13 @@
 #' @examples
 #' ## NOT RUN ##
 #' ## Connect to default data warehouse and data base
-#' # conn = tdConn(<username>, <password>)
+#' # conn = tdConn()
 #'
-#' ## Connect to data warehouse using different data base
+#' ## Connect to data warehouse using different credentials and data base
 #' # conn = tdConn(<username>, <password>, db='ADM_AMR')
 #'
 #' ## Connect to different data warehouse than default
-#' # conn = tdConn(<username>, <password>, addr="jdbc:teradata://redwood.corp.apple.com")
+#' # conn = tdConn(<username>, <password>, addr="jdbc:teradata://new.warehouse.com")
 #'
 #' @export
 tdConn = function(username=getOption("tdPassword"), password=NULL, addr=getOption("tdAddr"), db="", classPath=NULL, conn=NULL) {
