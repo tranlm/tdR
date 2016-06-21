@@ -28,11 +28,11 @@ where XXXX is the suffix added to the end of the uncompressed folder.
 For convenience, you can store your teradata username and password in the .Rprofile file, normally stored in the user home directory. It should be stored as
 
 ```shell
-options(tdPassword=c(<Teradata Username>="<Teradata Password>"))
+options(tdPassword=c(<Teradata Username>="<Teradata Password>"), tdAddr=<Teradata Address String>)
 ```
-So, for example, if your username is b123456 and your password is "mypassword", you would specify 
+So, for example, if your username is b123456, your password is "mypassword", and your address is "my.warehouse.com", you would specify 
 ```shell
-options(tdPassword=c(b123456="mypassword"))
+options(tdPassword=c(b123456="mypassword"), tdAddr="jdbc:teradata://my.warehouse.com")
 ```
 
 An example of the typical R script workflow
