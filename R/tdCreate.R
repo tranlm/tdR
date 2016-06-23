@@ -114,7 +114,7 @@ tdCreate = function(data=NULL, table=NULL, upload=TRUE, colType=NULL, pi=NULL, b
 
 	## Create table ##
 	if (verbose) cat("Creating table...")
-	cols = paste(gsub("\\.", "_", names(data)), colType)
+	cols = paste0('\"', gsub("\\.", "_", names(data)), '\" ', colType)
 	td(sprintf(
 		"create multiset table %s,
 		NO FALLBACK,
