@@ -66,17 +66,17 @@ tdCreate = function(data=NULL, table=NULL, upload=TRUE, colType=NULL, pi=NULL, b
 	if (is.null(colType)) {
 		colType = sapply(data, function(x) {
 				tmpClass = class(x)
-				if (tmpClass=="numeric") {
+				if (tmpClass[1]=="numeric") {
 					if (max(x) < 2000000) {
 						foo = "integer"
 					} else foo = "bigint"
-				} else if (tmpClass=="Date") {
+				} else if (tmpClass[1]=="Date") {
 					foo = "date"
-				} else if (tmpClass %in% c("POSIXct", "POSIXt")) {
+				} else if (tmpClass[1] %in% c("POSIXct", "POSIXt")) {
 					foo = "timestamp(0)"
 				} else {
 					stringLength = max(nchar(as.character(x)))
-					foo = paste0("varchar(", stringLength, ")")
+					foo = paste0("varchar(", max(stringLength,1), ")")
 				}
 				return(foo)
 			})
@@ -129,6 +129,7 @@ tdCreate = function(data=NULL, table=NULL, upload=TRUE, colType=NULL, pi=NULL, b
 	if (verbose) cat("\n")
 
 	## Upload data ##
+	if (verbose) cat("Uploading...\n")
 	uploadResult = 0
 	if (upload) {
 		uploadResult = tdUpload(data=data, table=table, batchSize=batchSize, verbose=verbose, conn=conn)

@@ -63,7 +63,7 @@ tdUpload = function(data=NULL, table=NULL, batchSize=2500, verbose=TRUE, ...) {
 	ps = .jcall(conn@jc, "Ljava/sql/PreparedStatement;", "prepareStatement", sprintf("insert into %s values(%s)", table, paste(rep("?", ncol(data)), collapse=",")))
 	for(i in 1:nrow(data)) {
 		for(j in 1:ncol(data)) {
-			if (class(data[[j]])=="numeric") {
+			if (class(data[[j]])[1]=="numeric") {
 				.jcall(ps,"V", "setDouble", as.integer(j), data[i,j])
 			} else {
 				.jcall(ps,"V", "setString", as.integer(j), as.character(data[i,j]))
