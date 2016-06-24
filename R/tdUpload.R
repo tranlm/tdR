@@ -27,6 +27,9 @@
 #'
 #' In order to keep the required Java memory down, data is uploaded in batches
 #' at a time. This can be configured to be as many (or little observations) as desired.
+#' If any of the batched observations have bad values, then all observations corresponding
+#' with that batch will fail to load. It might help in this situation to reduce the batch size
+#' to pinpoint which observation(s) is(are) causing the issue.
 #'
 #' @param data \code{link{data.frame}} containing data to upload. This must be in
 #' the same column order as the Teradata table.
@@ -61,6 +64,8 @@ tdUpload = function(data=NULL, table=NULL, batchSize=2500, verbose=TRUE, ...) {
 	if(!tdExists(table)) stop("Table not found.")
 
 	ps = .jcall(conn@jc, "Ljava/sql/PreparedStatement;", "prepareStatement", sprintf("insert into %s values(%s)", table, paste(rep("?", ncol(data)), collapse=",")))
+	rowsUploaded = tmpi = 0
+	badObs = NULL
 	for(i in 1:nrow(data)) {
 		for(j in 1:ncol(data)) {
 			if (class(data[[j]])[1]=="numeric") {
@@ -71,12 +76,18 @@ tdUpload = function(data=NULL, table=NULL, batchSize=2500, verbose=TRUE, ...) {
 		}
 		.jcall(ps,"V", "addBatch")
 		if (i %% batchSize == 0 | i==nrow(data)) {
-			loadResult = .jcall(ps,"[I","executeBatch")
-			if(verbose) message(sprintf("%d rows uploaded", sum(loadResult)))
+			loadResult = try(.jcall(ps,"[I","executeBatch"), TRUE)
+			if (inherits(loadResult, "try-error")) {
+				badObs = c(badObs, (tmpi+1):i)
+			} else {
+				rowsUploaded = rowsUploaded + sum(loadResult)
+				if(verbose) message(sprintf("%d rows uploaded", sum(loadResult)))
+			}
+			tmpi = i
 		}
 	}
 	.jcall(ps,"V","close")
-	rowsUploaded = tdRows(table)
+	if (length(badObs)>0) warning(paste("Error with data. Did not upload the following rows: ", paste(badObs, collapse=", ")))
 
 	## Connection ##
 	if (attr(conn, "tmpConnection")) DBI::dbDisconnect(conn)

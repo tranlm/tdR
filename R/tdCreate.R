@@ -30,8 +30,11 @@
 #'		\item{All others}{varchar with length equal to the longest character length}
 #' '}
 #'
-#' Please note that in order to keep the required Java memory down, data is uploaded in batches
+#' In order to keep the required Java memory down, data is uploaded in batches
 #' at a time. This can be configured to be as many (or little observations) as desired.
+#' If any of the batched observations have bad values, then all observations corresponding
+#' with that batch will fail to load. It might help in this situation to reduce the batch size
+#' to pinpoint which observation(s) is(are) causing the issue.
 #'
 #' @param data \code{link{data.frame}} containing data to upload. This must be in
 #' the same column order as the Teradata table.
@@ -45,6 +48,7 @@
 #' @param pi Primary index for Teradata table. If NULL, will take the first column with all unique
 #' values as the primary index. If none exists, will take the first column in \code{data}.
 #' @param batchSize Number of rows to upload simultaneously. Only used if \code{upload=TRUE}.
+#' @param deleteIfExists If \code{TRUE}, then check for table and deletes if one exists.
 #' @param verbose logical. If \code{TRUE}, then print message after each batch is uploaded.
 #' @param ... Optional connection settings.
 #'
@@ -57,7 +61,7 @@
 #'
 #'
 #' @export
-tdCreate = function(data=NULL, table=NULL, upload=TRUE, colType=NULL, pi=NULL, batchSize=2500, verbose=TRUE, ...) {
+tdCreate = function(data=NULL, table=NULL, upload=TRUE, colType=NULL, pi=NULL, batchSize=2500, deleteIfExists=FALSE, verbose=TRUE, ...) {
 
 	## Column type ##
 	supportedTypes = c("numeric", "Date", "POSIXct", "POSIXt", "character")
@@ -96,6 +100,12 @@ tdCreate = function(data=NULL, table=NULL, upload=TRUE, colType=NULL, pi=NULL, b
 		if (length(table)>2) stop("Table names can only have up to 1 period.")
 	}
 
+	## Check ##
+	if (class(data)[1]!="data.frame") {
+		warning("data provided not in data.frame class. Converted to one for processing.")
+		data = data.frame(data)
+	}
+
 	## Primary index ##
 	if (!is.null(pi)) {
 		if (upper(pi) %in% upper(names(data))) stop(paste(pi, "was not found in the column names."))
@@ -113,7 +123,13 @@ tdCreate = function(data=NULL, table=NULL, upload=TRUE, colType=NULL, pi=NULL, b
 	attr(conn, "tmpConnection") = FALSE
 
 	## Create table ##
-	if (verbose) cat("Creating table...")
+	if (verbose) message("Creating table...")
+	if (deleteIfExists) {
+		if (tdExists(table)) {
+			warning(paste(table, "already exists. Deleted previous table."))
+			tdDrop(table)
+		}
+	}
 	cols = paste0('\"', gsub("\\.", "_", names(data)), '\" ', colType)
 	td(sprintf(
 		"create multiset table %s,
@@ -126,10 +142,10 @@ tdCreate = function(data=NULL, table=NULL, upload=TRUE, colType=NULL, pi=NULL, b
 			%s
 		)
 		primary index (%s);", table, paste(cols, collapse="\n, "), pi), conn=conn)
-	if (verbose) cat("\n")
+	if (verbose) message("\n")
 
 	## Upload data ##
-	if (verbose) cat("Uploading...\n")
+	if (verbose) message("Uploading...\n")
 	uploadResult = 0
 	if (upload) {
 		uploadResult = tdUpload(data=data, table=table, batchSize=batchSize, verbose=verbose, conn=conn)
