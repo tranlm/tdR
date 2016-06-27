@@ -8,12 +8,15 @@ tdConn(username = getOption("tdPassword"), password = NULL,
   addr = getOption("tdAddr"), db = "", classPath = NULL, conn = NULL)
 }
 \arguments{
-\item{username}{Connection user name.}
+\item{username}{Connection user name. By default, will try to search for a global
+environment variable called \code{tdPassword}. If found, will use those credentials.}
 
-\item{password}{Connection password.}
+\item{password}{Connection password. By default, will try to search for a global 
+environment variable called \code{tdPassword}. If found, will use those credentials.}
 
-\item{addr}{String containing address of database to connect to. By default, is
-\emph{jdbc:teradata://megadew.corp.apple.com/charset=utf8}.}
+\item{addr}{String containing address of database to connect to. By default, will 
+try to search for a global environment variable called \code{tdAddr}. If found, will
+use those credentials.}
 
 \item{db}{Name of database to connect to.}
 
@@ -44,13 +47,13 @@ tdgssconfig.jar and terajdbc4.jar drivers.
 \examples{
 ## NOT RUN ##
 ## Connect to default data warehouse and data base
-# conn = tdConn(<username>, <password>)
+# conn = tdConn()
 
-## Connect to data warehouse using different data base
+## Connect to data warehouse using different credentials and data base
 # conn = tdConn(<username>, <password>, db='ADM_AMR')
 
 ## Connect to different data warehouse than default
-# conn = tdConn(<username>, <password>, addr="jdbc:teradata://redwood.corp.apple.com")
+# conn = tdConn(<username>, <password>, addr="jdbc:teradata://new.warehouse.com")
 
 }
 \seealso{

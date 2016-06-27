@@ -5,7 +5,8 @@
 \title{tdCreate}
 \usage{
 tdCreate(data = NULL, table = NULL, upload = TRUE, colType = NULL,
-  pi = NULL, batchSize = 2500, verbose = TRUE, ...)
+  pi = NULL, batchSize = 2500, deleteIfExists = FALSE, verbose = TRUE,
+  ...)
 }
 \arguments{
 \item{data}{\code{link{data.frame}} containing data to upload. This must be in
@@ -25,6 +26,8 @@ approach listed in details section.}
 values as the primary index. If none exists, will take the first column in \code{data}.}
 
 \item{batchSize}{Number of rows to upload simultaneously. Only used if \code{upload=TRUE}.}
+
+\item{deleteIfExists}{If \code{TRUE}, then check for table and deletes if one exists.}
 
 \item{verbose}{logical. If \code{TRUE}, then print message after each batch is uploaded.}
 
@@ -56,8 +59,11 @@ the provided \code{data.frame}.
 	\item{All others}{varchar with length equal to the longest character length}
 '}
 
-Please note that in order to keep the required Java memory down, data is uploaded in batches
+In order to keep the required Java memory down, data is uploaded in batches
 at a time. This can be configured to be as many (or little observations) as desired.
+If any of the batched observations have bad values, then all observations corresponding
+with that batch will fail to load. It might help in this situation to reduce the batch size
+to pinpoint which observation(s) is(are) causing the issue.
 }
 \seealso{
 \code{\link{tdConn}} for connection, \code{\link{tdUpload}} for table upload,

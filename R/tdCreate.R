@@ -142,13 +142,12 @@ tdCreate = function(data=NULL, table=NULL, upload=TRUE, colType=NULL, pi=NULL, b
 			%s
 		)
 		primary index (%s);", table, paste(cols, collapse="\n, "), pi), conn=conn)
-	if (verbose) message("\n")
 
 	## Upload data ##
-	if (verbose) message("Uploading...\n")
+	if (verbose) message("Uploading...")
 	uploadResult = 0
 	if (upload) {
-		uploadResult = tdUpload(data=data, table=table, batchSize=batchSize, verbose=verbose, conn=conn)
+		uploadResult = tdUpload(data=data, table=table, batchSize=batchSize, verbose=verbose, checkTable=FALSE, conn=conn)
 	}
 
 	## Connection ##

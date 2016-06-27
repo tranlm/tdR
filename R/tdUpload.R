@@ -35,7 +35,9 @@
 #' the same column order as the Teradata table.
 #' @param table Name of the Teradata table to upload data to.
 #' @param batchSize Number of rows to upload simultaneously.
-#' @param verbose logical. If \code{TRUE}, then print message after each batch is uploaded.
+#' @param verbose logical. If \code{TRUE}, then print progress after each batch is uploaded.
+#' @param checkTable logical. If \code{TRUE}, then assumed that table already exists. If \code{FALSE},
+#' then check whether table exists. Used internally with \code{tdCreate} function to cut down on processing time.
 #' @param ... Optional connection settings.
 #'
 #' @return Returns an invisible objecting containing the count of the number of rows uploaded.
@@ -47,7 +49,7 @@
 #'
 #'
 #' @export
-tdUpload = function(data=NULL, table=NULL, batchSize=2500, verbose=TRUE, ...) {
+tdUpload = function(data=NULL, table=NULL, batchSize=2500, verbose=TRUE, checkTable=TRUE, ...) {
 
 	supportedTypes = c("numeric", "character", "Date", "POSIXct", "POSIXt")
 	tmp = unlist(lapply(sapply(data, class), function(x) return(x[1])))
@@ -61,8 +63,11 @@ tdUpload = function(data=NULL, table=NULL, batchSize=2500, verbose=TRUE, ...) {
 
 	## Query ##
 	table = paste(table, sep=".")
-	if(!tdExists(table)) stop("Table not found.")
-
+	if (checkTable) {
+		if (!tdExists(table)) stop("Table not found.")	
+	}
+	if (verbose) pb = txtProgressBar(max=nrow(data), style=3)
+	
 	ps = .jcall(conn@jc, "Ljava/sql/PreparedStatement;", "prepareStatement", sprintf("insert into %s values(%s)", table, paste(rep("?", ncol(data)), collapse=",")))
 	rowsUploaded = tmpi = 0
 	badObs = NULL
@@ -81,12 +86,15 @@ tdUpload = function(data=NULL, table=NULL, batchSize=2500, verbose=TRUE, ...) {
 				badObs = c(badObs, (tmpi+1):i)
 			} else {
 				rowsUploaded = rowsUploaded + sum(loadResult)
-				if(verbose) message(sprintf("%d rows uploaded", sum(loadResult)))
+			}
+			if(verbose) {
+				setTxtProgressBar(pb, i)
 			}
 			tmpi = i
 		}
 	}
 	.jcall(ps,"V","close")
+	if (verbose) cat("\n")
 	if (length(badObs)>0) warning(paste("Error with data. Did not upload the following rows: ", paste(badObs, collapse=", ")))
 
 	## Connection ##

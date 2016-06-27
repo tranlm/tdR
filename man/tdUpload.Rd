@@ -5,7 +5,7 @@
 \title{tdUpload}
 \usage{
 tdUpload(data = NULL, table = NULL, batchSize = 2500, verbose = TRUE,
-  ...)
+  checkTable = TRUE, ...)
 }
 \arguments{
 \item{data}{\code{link{data.frame}} containing data to upload. This must be in
@@ -15,7 +15,10 @@ the same column order as the Teradata table.}
 
 \item{batchSize}{Number of rows to upload simultaneously.}
 
-\item{verbose}{logical. If \code{TRUE}, then print message after each batch is uploaded.}
+\item{verbose}{logical. If \code{TRUE}, then print progress after each batch is uploaded.}
+
+\item{checkTable}{logical. If \code{TRUE}, then assumed that table already exists. If \code{FALSE},
+then check whether table exists. Used internally with \code{tdCreate} function to cut down on processing time.}
 
 \item{...}{Optional connection settings.}
 }
@@ -42,6 +45,9 @@ other \code{class} is included, an error will be thrown.
 
 In order to keep the required Java memory down, data is uploaded in batches
 at a time. This can be configured to be as many (or little observations) as desired.
+If any of the batched observations have bad values, then all observations corresponding
+with that batch will fail to load. It might help in this situation to reduce the batch size
+to pinpoint which observation(s) is(are) causing the issue.
 }
 \seealso{
 \code{\link{tdConn}} for connection, \code{\link{tdNames}} for table names,
