@@ -67,7 +67,7 @@ tdCpu = function(user="user", date=as.Date(Sys.time()), ...) {
 		FROM dbc.qrylog
 			where cast(starttime as date) = '%s' and username = %s
 		order by 1 asc;",
-	date, user)
+	date, ifelse(user=="user", "user", paste0("\'", user, "\'")))
 	tableInfo = td(query, conn=conn)
 
 	## Connection ##

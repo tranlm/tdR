@@ -1,6 +1,6 @@
 Package: tdR
 Title: Teradata interaction and query package
-Version: 0.0.5.0000
+Version: 0.0.6.0000
 Author: Linh Tran
 Maintainer: Linh Tran <linh_m_tran@apple.com>
 Description: Helper functions to streamline Teradata queries and other miscellaneous things.
