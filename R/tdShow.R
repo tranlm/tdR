@@ -65,7 +65,7 @@ tdShow = function(table=NULL, ...) {
 	## Query ##
 	tdCat = try(get(".tdCat", envir=.GlobalEnv), TRUE)
 	showResults = ''
-	tmpTry = try(td(sprintf('show select * from %s;', paste(table, collapse=".")), conn=conn), TRUE)
+	tmpTry = try(td(sprintf('show select * from %s;', table), conn=conn), TRUE)
 	if (!inherits(tmpTry, 'try-error') & !(!inherits(tdCat, "try-error") & tdCat==TRUE)) {
 		showResults[1] = paste(tmpTry$RequestText, collapse="")
 	}
