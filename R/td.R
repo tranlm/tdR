@@ -55,8 +55,11 @@
 td = function(query="", ...) {
 
 	if (query=="") stop("No query statement given.")
-
-	tdCat = try(get(".tdCat", envir=.GlobalEnv), TRUE)
+	if ("tdCat" %in% names(list(...))) {
+		tdCat = list(...)$tdCat
+	} else {
+		tdCat = try(get(".tdCat", envir=.GlobalEnv), TRUE)
+	}
 	if (!inherits(tdCat, "try-error") & tdCat==TRUE) {
 		cat("\n", query, "\n")
 		rs = NULL
