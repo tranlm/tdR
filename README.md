@@ -2,35 +2,13 @@
 
 This is the current version of the tdR R package (version 0.6.1\*). Dependencies for this package include the DBI and RJDBC packages, which depend on rJava.
 
-## How to install from Gitlab ##
-
-To install the tdR package, we recommend cloning the gitlab repository
-=======
-
-### Gitlab
-With the terminal open, you can install the cdmApple package using the following script.
-
-```shell
-git clone git@gitlab.sd.apple.com:cdmApple/tdR.git
-R --vanilla CMD INSTALL tdR
-```
-
-### Download
-Alternatively, the package is available for download. Safari unzips the compressed folder, and will usually add a suffix to the name. The package can then be install with the command
-
-```shell
-R --vanilla CMD INSTALL tdR-master-XXXX
-```
-
-where XXXX is the suffix added to the end of the uncompressed folder.
-
 ### Teradata information
 For convenience, you can store your teradata username and password in the .Rprofile file, normally stored in the user home directory. It should be stored as
 
 ```shell
 options(tdPassword=c(<Teradata Username>="<Teradata Password>"), tdAddr=<Teradata Address String>)
 ```
-So, for example, if your username is b123456, your password is "mypassword", and your address is "my.warehouse.com", you would specify 
+So, for example, if your username is b123456, your password is "mypassword", and your warehouse address is "my.warehouse.com", you would specify 
 ```shell
 options(tdPassword=c(b123456="mypassword"), tdAddr="jdbc:teradata://my.warehouse.com")
 ```
