@@ -33,6 +33,10 @@ tdUpload(XX_data, 'XX_data')
 ## ORGANIZE DATA ##
 td("create table xxxx as (...)")
 
+## USING PLACEHOLDERS ##
+myTable = "test"
+td(sprintf("sel %s from table", myTable))
+
 ## DEBUGGING ##
 tdRows("xxxx")
 tdNames("xxxx")
