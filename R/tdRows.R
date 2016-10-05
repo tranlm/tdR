@@ -44,7 +44,7 @@
 #' # tdRows("ICDB_PERSON")
 #'
 #' @export
-tdRows = function(table=NULL, where="", ...) {
+tdRows = function(table=NULL, where="", pretty=TRUE, ...) {
 	
 	tmp = try(eval(table), TRUE)
 	if (inherits(tmp, "try-error")) tmp = paste(substitute(list(table)))[-1]
@@ -60,6 +60,9 @@ tdRows = function(table=NULL, where="", ...) {
 	if (where!="") where = paste("where", where)
 	
 	tmpRows = td(sprintf("select cast(count(*) as bigint) from %s %s;", paste(table, collapse="."), where), conn=conn)[1,1]
+	if (pretty) {
+		tmpRows = format(tmpRows, big.mark=",", trim=TRUE)
+	}
 	
 	## Connection ##
 	if (	attr(conn, "tmpConnection")) DBI::dbDisconnect(conn)

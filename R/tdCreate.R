@@ -108,7 +108,7 @@ tdCreate = function(data=NULL, table=NULL, upload=TRUE, colType=NULL, pi=NULL, b
 
 	## Primary index ##
 	if (!is.null(pi)) {
-		if (upper(pi) %in% upper(names(data))) stop(paste(pi, "was not found in the column names."))
+		if (toupper(pi) %in% toupper(names(data))) stop(paste(pi, "was not found in the column names."))
 	} else {
 		piCounts = sapply(data, function(x) {
 				return(length(unique(x)))

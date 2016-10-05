@@ -66,7 +66,7 @@ tdDisk = function(user="user", ...) {
 				and b.CREATORNAME = %s)
 				group by 1, 2
 				order by 1, 4 desc;",
-			user)
+			ifelse(user=="user", user, paste0("\'", user, "\'")))
 	tableInfo = td(query, conn=conn)
 
 	## Connection ##
