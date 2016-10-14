@@ -98,6 +98,7 @@ tdCreate = function(data=NULL, table=NULL, upload=TRUE, colType=NULL, pi=NULL, b
 	} else {
 		table = strsplit(table, "\\.")[[1]]
 		if (length(table)>2) stop("Table names can only have up to 1 period.")
+		table = paste(table, collapse=".")
 	}
 
 	## Check ##
