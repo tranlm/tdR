@@ -62,7 +62,7 @@ tdUpload = function(data=NULL, table=NULL, batchSize=2500, verbose=TRUE, checkTa
 	conn = tdCheckConn(list(...))
 
 	## Query ##
-	table = paste(table, sep=".")
+	table = paste(table, collapse=".")
 	if (checkTable) {
 		if (!tdExists(table)) stop("Table not found.")	
 	}
