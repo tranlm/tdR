@@ -73,7 +73,7 @@ tdNames = function(table=NULL, ...) {
 
 	## Query ##
 	qry = paste("where", ifelse(length(table)==1, sprintf("upper(TableName)='%s'", table[1]), ifelse(length(table)==2, sprintf("upper(DatabaseName)='%s' AND upper(TableName)='%s'", table[1], table[2]), "")))
-	tableInfo = td(sprintf("select trim(ColumnName) names FROM DBC.COLUMNS %s;", qry), conn=conn)
+	tableInfo = td(sprintf("select trim(ColumnName) names FROM DBC.COLUMNSv %s;", qry), conn=conn)
 	if (nrow(tableInfo)==0) stop(paste("No table details found for:", paste(paste(table[,1], table[,2], sep="."), collapse=", ")))
 	
 	## Connection ##
